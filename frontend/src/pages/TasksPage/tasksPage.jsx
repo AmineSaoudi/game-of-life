@@ -11,7 +11,7 @@ export default function TasksPage() {
       id: 1,
       title: "Take out the garbage",
       description: "Before 8pm",
-      dueDate: new Date(2025, 10, 15),
+      dueDate: "2025-11-15",
       points: 10,
       completed: false,
     },
@@ -31,6 +31,7 @@ export default function TasksPage() {
   const [newTask, setNewTask] = useState({
     title: "",
     description: "",
+    dueDate: "",
     points: ""
   })
 
@@ -39,7 +40,7 @@ export default function TasksPage() {
   // when done creating a new task, reset new task fiels to empty
   // to accomodate next new task
   const handleClose = () => {
-    setNewTask({ title: "", description: "", points: "" });
+    setNewTask({ title: "", description: "", dueDate: "", points: "" });
     setOpen(false);
   };
 
@@ -51,6 +52,7 @@ export default function TasksPage() {
       id: Date.now(),
       title: newTask.title,
       description: newTask.description,
+      dueDate: newTask.dueDate,
       points: Number(newTask.points),
       completed: false
     };
@@ -80,7 +82,7 @@ export default function TasksPage() {
     // current day at midnight
     const now = new Date();
     now.setHours(0, 0, 0, 0);
-    const due = task.dueDate ? new Date(task.dueDate) : null;
+    const due = task.dueDate ? new Date(task.dueDate + "T00:00:00") : null;
 
     switch(filter) {
         case "today":
@@ -134,33 +136,33 @@ export default function TasksPage() {
           width: "90%",
           mx: "auto",
           mt: 2,
-          borderRadius: 2,
+          borderRadius: 1,
           overflow: "hidden",
           boxShadow: "0 3px 10px rgba(0,0,0,0.15)"
         }}
       >
       {["today", "upcoming", "future", "ongoing", "overdue"].map(section => (
-      <Box
-        key={section}
-        onClick={() => setFilter(section)}
-        sx={{
-            flex: 1,
-            py: 2,
-            textAlign: "center",
-            cursor: "pointer",
-            userSelect: "none",
-            bgcolor: filter === section ? "#9049A4" : "#EFD7FF",
-            color: filter === section ? "white" : "#5A3C7A",
-            fontWeight: "bold",
-            borderRight: section !== "overdue" ? "2px solid #CBA8EF" : "none",
-            transition: "0.25s",
-            "&:hover": {
-            bgcolor: filter === section ? "#7a3b90" : "#dcbfff"
-            }
-        }}
-      >
-        {section.toUpperCase()}
-      </Box>
+        <Box
+            key={section}
+            onClick={() => setFilter(section)}
+            sx={{
+                flex: 1,
+                py: 2,
+                textAlign: "center",
+                cursor: "pointer",
+                userSelect: "none",
+                bgcolor: filter === section ? "#9049A4" : "#EFD7FF",
+                color: filter === section ? "white" : "#5A3C7A",
+                fontWeight: "bold",
+                borderRight: section !== "overdue" ? "2px solid #CBA8EF" : "none",
+                transition: "0.25s",
+                "&:hover": {
+                bgcolor: filter === section ? "#7a3b90" : "#dcbfff"
+                }
+            }}
+        >
+            {section.toUpperCase()}
+        </Box>
       ))}
       </Box>
 
@@ -204,6 +206,17 @@ export default function TasksPage() {
             fullWidth
             value={newTask.description}
             onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+          />
+
+          <TextField
+            margin="dense"
+            label="Due Date"
+            type="date"
+            // So that date picker appears below the label
+            InputLabelProps={{ shrink: true }}
+            fullWidth
+            value={newTask.dueDate}
+            onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
           />
 
           <TextField
