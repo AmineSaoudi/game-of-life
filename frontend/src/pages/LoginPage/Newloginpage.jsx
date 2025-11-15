@@ -25,7 +25,7 @@ const LoginPage = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ username, password }),
+          body: JSON.stringify({ username: username.toLowerCase(), password }),
           credentials: "include",
         }
       );
@@ -53,19 +53,6 @@ const LoginPage = () => {
     }
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-
-  //   // 🔑 SUPER SIMPLE "AUTH" – replace with real API call
-  //   if (email === "test@example.com" && password === "password") {
-  //     setError("");
-  //     // On successful login, go to home page
-  //     navigate("/");
-  //   } else {
-  //     setError("Invalid email or password");
-  //   }
-  // };
-
   return (
     <Box
       sx={{
@@ -92,8 +79,7 @@ const LoginPage = () => {
 
         <Box component="form" onSubmit={handleSubmit} noValidate>
           <TextField
-            label="Email"
-            type="email"
+            label="Username"
             fullWidth
             required
             margin="normal"
@@ -117,7 +103,13 @@ const LoginPage = () => {
             </Typography>
           )}
 
-          <Button type="submit" variant="contained" fullWidth sx={{ mt: 2 }}>
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            sx={{ mt: 2 }}
+            disabled={loading}
+          >
             Log In
           </Button>
         </Box>
