@@ -7,14 +7,15 @@ import {
 } from "react";
 
 const AuthContext = createContext(null);
-const API_BASE = "http://10.121.13.65:3000/api";
+
+const TOKEN_KEY = "token";
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem(TOKEN_KEY);
 
     if (!token) {
       // no token -> not authenticated, skip /me
@@ -22,7 +23,7 @@ export function AuthProvider({ children }) {
       return;
     }
 
-    fetch(`${API_BASE}/auth/me`, {
+    fetch(`${import.meta.env.VITE_SERVER_ORIGIN}/auth/me`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

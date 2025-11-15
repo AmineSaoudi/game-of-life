@@ -1,42 +1,79 @@
 // src/pages/LoginPage.jsx
-import React, { useState } from 'react';
-import {
-  Box,
-  Button,
-  TextField,
-  Typography,
-  Paper,
-} from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { Box, Button, TextField, Typography, Paper } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "../../context/AuthContext";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const { setUser } = useAuthContext();
 
-  const [error, setError] = useState('');
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 🔑 SUPER SIMPLE "AUTH" – replace with real API call
-    if (email === 'test@example.com' && password === 'password') {
-      setError('');
-      // On successful login, go to home page
-      navigate('/');
-    } else {
-      setError('Invalid email or password');
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await fetch(
+        `${import.meta.env.VITE_SERVER_ORIGIN}/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, password }),
+          credentials: "include",
+        }
+      );
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          throw new Error("Incorrect Username or Password");
+        } else {
+          throw new Error("Something went wrong");
+        }
+      }
+
+      const authResponse = await res.json();
+      console.log(authResponse);
+      localStorage.setItem("token", authResponse.token);
+      console.log(authResponse.user);
+      setUser(authResponse.user);
+
+      const from = location?.state?.from?.pathname || "/";
+      navigate(from, { replace: true });
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
+
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+
+  //   // 🔑 SUPER SIMPLE "AUTH" – replace with real API call
+  //   if (email === "test@example.com" && password === "password") {
+  //     setError("");
+  //     // On successful login, go to home page
+  //     navigate("/");
+  //   } else {
+  //     setError("Invalid email or password");
+  //   }
+  // };
 
   return (
     <Box
       sx={{
-        minHeight: '100vh',
-        bgcolor: '#f5f5f5',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        minHeight: "100vh",
+        bgcolor: "#f5f5f5",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
         p: 2,
       }}
     >
@@ -44,7 +81,7 @@ const LoginPage = () => {
         elevation={3}
         sx={{
           maxWidth: 400,
-          width: '100%',
+          width: "100%",
           p: 4,
           borderRadius: 2,
         }}
@@ -60,8 +97,8 @@ const LoginPage = () => {
             fullWidth
             required
             margin="normal"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
 
           <TextField
@@ -75,21 +112,12 @@ const LoginPage = () => {
           />
 
           {error && (
-            <Typography
-              color="error"
-              variant="body2"
-              sx={{ mt: 1, mb: 1 }}
-            >
+            <Typography color="error" variant="body2" sx={{ mt: 1, mb: 1 }}>
               {error}
             </Typography>
           )}
 
-          <Button
-            type="submit"
-            variant="contained"
-            fullWidth
-            sx={{ mt: 2 }}
-          >
+          <Button type="submit" variant="contained" fullWidth sx={{ mt: 2 }}>
             Log In
           </Button>
         </Box>
