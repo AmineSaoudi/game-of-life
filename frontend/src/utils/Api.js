@@ -36,35 +36,39 @@ export const userApiCalls = {
   // all users (if your backend supports this)
 
   // current logged-in user (adjust to /me or /auth/me if that's your backend)
-  getCurrentUser: async () => apiCall('/auth/me'),
+  getCurrentUser: async () =>  apiCall('/auth/me'),
 };
 
 // ---- TASKS (current user inferred from auth) ----
 export const taskApiCalls = {
   // all tasks for the currently logged-in user
-  getTasks: async () => apiCall('/tasks'),
+  getTasks: async () =>  apiCall('/tasks'),
 
-  // only tasks where type === "SINGLE"
+  // only tasks where type === "NON_RECURRING"
   getSingleTasks: async () => {
     const tasks = await apiCall('/tasks'); // array of tasks for current user
-    return tasks.filter((task) => task.type === 'SINGLE');
+    return tasks.filter((task) => task.type === 'NON_RECURRING');
 
   },
 
-  // only tasks where type === "HABIT"
+  // only tasks where type === "RECURRING"
   getHabitTasks: async () => {
     const tasks = await apiCall('/tasks');
-    return tasks.filter((task) => task.type === 'HABIT');
+    return tasks.filter((task) => task.type === 'RECURRING');
   },
 
   //*****CREATIONAL TASKS*****
-  CreateTask: async(taskCreateReq)=> {
-    return apiCall("/tasks", { method: 'PUT', Body: JSON.stringify(taskCreateReq)})
-
-    
+  createTask: async(taskCreateReq)=> {
+    return apiCall("/tasks", { method: 'POST', body: JSON.stringify(taskCreateReq)})
+  },
+  //*****UPDATE TASKS*****
+  updateTask: async(taskId, taskPatchReq) => {
+    return apiCall(`/tasks/${taskId}`, {method: 'PATCH', body: JSON.stringify(taskPatchReq)})
+  },
+  //*****DELETE TASKS*****
+  deleteTask: async(taskId) => {
+    return apiCall(`/tasks/${taskId}`, {method: 'DELETE'})
   }
-
-
 
 };
 
