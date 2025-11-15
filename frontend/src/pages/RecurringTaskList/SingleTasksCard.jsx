@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { taskApiCalls } from "../../utils/Api.js"
 import { useEffect, useState } from 'react';
 import {
   Paper,
@@ -10,42 +10,25 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { mockTasksAPI } from '../../utils/MockApi.js'; // <-- adjust path to where you put it
 
-const SingleTasksCard = ({ currentUser }) => {
+const SingleTasksCard = () => {
   const [tasks, setTasks] = useState([]);
   const [error, setError] = useState(null); // helpful for debugging
-
-
+  
   useEffect(() => {
-  if (!currentUser?.id) return;
-
-  let ignore = false;
-
-  (async () => {
-    try {
-      const allTasks = await mockTasksAPI.getTasksForUser(currentUser.id);
-      if (ignore) return;
-
-      const topThreeSingleTasks = allTasks
-        .filter((task) => task.type === 'SINGLE')
-        .sort(
-          (a, b) =>
-            Number(b.points ?? 0) - Number(a.points ?? 0) // highest points first
-        )
-        .slice(0, 3); // only keep first 3
-
-      setTasks(topThreeSingleTasks);
-    } catch (err) {
-      console.error(err);
-      if (!ignore) setError(err);
-    }
-  })();
-
-  return () => {
-    ignore = true;
-  };
-}, [currentUser]);
+      const fetchTasks = async () => {
+        try {
+          const data = await taskApiCalls.getSingleTasks();
+          console.log('User tasks:', data);
+          setTasks(data || []);
+        } catch (err) {
+          setError(err);
+          console.error('Failed to load tasks:', err);
+        }
+      };
+  
+      fetchTasks(); // actually run the async function
+    }, []);
 
   // For now, show something even if there are no tasks, so you can SEE the card
   if (error) {
@@ -76,6 +59,8 @@ const SingleTasksCard = ({ currentUser }) => {
       </Paper>
     );
   }
+  const visibleTasks = tasks.slice(0, 3);
+
 
   return (
     <Paper
@@ -101,7 +86,7 @@ const SingleTasksCard = ({ currentUser }) => {
       </Typography>
 
       <List disablePadding dense>    {/* 👈 dense makes items shorter */}
-        {tasks.map((task) => (
+        {visibleTasks.map((task) => (
           <ListItem
             key={task.id}
             sx={{

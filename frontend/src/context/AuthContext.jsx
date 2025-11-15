@@ -8,17 +8,16 @@ import {
 
 const AuthContext = createContext(null);
 
-const TOKEN_KEY = "token";
-
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem(TOKEN_KEY);
+    const token = localStorage.getItem(import.meta.env.VITE_TOKEN_KEY);
 
     if (!token) {
       // no token -> not authenticated, skip /me
+      console.log("NO TOKEN");
       setLoading(false);
       return;
     }
@@ -40,7 +39,7 @@ export function AuthProvider({ children }) {
       .catch((err) => {
         console.error(err);
         // token is bad -> clear it
-        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(import.meta.env.VITE_TOKEN_KEY);
         setUser(null);
       })
       .finally(() => {
@@ -49,7 +48,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   const logout = () => {
-    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(import.meta.env.VITE_TOKEN_KEY);
     setUser(null);
   };
 

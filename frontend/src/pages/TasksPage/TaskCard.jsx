@@ -6,14 +6,15 @@ export default function TaskCard({ task, onComplete }) {
     <Card
       sx={{
         marginBottom: 2,
-        padding: 2,
+        padding: 0.5,
         width: "30%",
-        bgcolor: "#9049A4",
-        color: "#F0C5FD",
-        borderRadius: 10,
+        bgcolor: "#E2CFFE",
+        color: "#7A2E8E",
+        border: "2px solid #e7b1f7ff",
+        borderRadius: 2,
         boxShadow: 1,
         "&:hover": {
-          bgcolor: "#7F3F92",
+          bgcolor: "#d3b7feff",
           boxShadow: 1,
           transform: "scale(1.001)",
         },
@@ -21,8 +22,10 @@ export default function TaskCard({ task, onComplete }) {
       }}
     >
       <CardContent>
-        {/* Task title and checkbox container */}
+        {/* Task title and checkbox container. So that they're on the same line. */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+
+          {/* Task Title */}
           <Typography variant="h6" sx={{
             fontFamily: "'Press Start 2P', cursive",
             fontSize: "15px"
@@ -31,14 +34,15 @@ export default function TaskCard({ task, onComplete }) {
             {task.title}
           </Typography>
 
+          {/* Checkbox */}
           <Box
             onClick={() => !task.completed && onComplete(task.id)}
             sx={{
               width: 30,
               height: 30,
-              bgcolor: task.completed ? "green" : "#F0C5FD",
-              borderRadius: 2,
-              border: "2px solid #F0C5FD",
+              bgcolor: task.completed ? "green" : "#faf6fbff",
+              borderRadius: 0.5,
+              border: "2px solid #e7b1f7ff",
               cursor: task.completed ? "default" : "pointer",
               display: "flex",
               alignItems: "center",
@@ -66,16 +70,27 @@ export default function TaskCard({ task, onComplete }) {
           </Box>
         </Box>
 
+        {/* Task Description */}
         {task.description && (
-          <Typography variant="body2" color="#F4DBFB" sx={{ mt: 1 }}>
+          <Typography variant="body2" color="#8e40a2ff" sx={{ mt: 1 }}>
             {task.description}
           </Typography>
         )}
 
+        {/* Task Due Date */}
+        {task.duedate && (
+          <Typography variant = "body2" color="#8e40a2ff" sx={{ mt: 1 }}>
+            {task.duedate}
+          </Typography>
+        )
+        }
+
+        {/* Associated points/difficulty level */}
         <Typography sx={{ mt: 1 }}>
           Points: <b>{task.points}</b>
         </Typography>
 
+        {/* Task Frequency (for habit tasks) */}
         {task.frequency && (
           <Typography variant="caption">Frequency: {task.frequency}</Typography>
         )}
