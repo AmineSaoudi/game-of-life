@@ -62,7 +62,6 @@ const SingleTasksCard = ({ currentUser }) => {
           p: 2,
           width: { xs: '100%', sm: 600 },
           maxWidth: '100%',
-          width: '100%',
           bgcolor: 'rgba(255, 248, 240, 0.9)',
           backdropFilter: 'blur(4px)',
         }}
@@ -82,9 +81,7 @@ const SingleTasksCard = ({ currentUser }) => {
         m: 1,
         borderRadius: 3,
         p: 1.5,
-        maxWidth: 600,
         width: { xs: '100%', sm: 600 },
-        maxWidth: '100%',
         bgcolor: 'rgba(255, 248, 240, 0.9)',
         backdropFilter: 'blur(4px)',
         height: 'auto',          // ensure content-based height
