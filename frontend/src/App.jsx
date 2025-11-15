@@ -5,11 +5,11 @@ import { Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/landingpageFolder/landingpage.jsx";
 import TasksPage from "./pages/TasksPage/tasksPage.jsx";
 import HabitsPage from "./pages/HabitsPage/habitsPage.jsx";
-import Login from "./pages/Login/Login.jsx";
 import Signup from "./pages/Signup/Signup.jsx";
 import AuthRoute from "./routes/AuthRoute.jsx";
 import GuestRoute from "./routes/GuestRoute.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
+import Newlogin from "./pages/LoginPage/Newloginpage.jsx";
 
 function App() {
   return (
@@ -24,7 +24,7 @@ function App() {
         </Route>
 
         <Route element={<GuestRoute />}>
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<Newlogin />} />
           <Route path="/signup" element={<Signup />} />
         </Route>
       </Routes>
