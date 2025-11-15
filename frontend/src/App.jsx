@@ -5,6 +5,7 @@ import { Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/landingpageFolder/landingpage.jsx";
 import TasksPage from "./pages/TasksPage/tasksPage.jsx";
 import HabitsPage from "./pages/HabitsPage/habitsPage.jsx";
+import RewardsPage from "./pages/RewardsPage/RewardsPage.jsx";
 import Signup from "./pages/Signup/Signup.jsx";
 import AuthRoute from "./routes/AuthRoute.jsx";
 import GuestRoute from "./routes/GuestRoute.jsx";
@@ -21,6 +22,7 @@ function App() {
           <Route path="/" element={<LandingPage />} /> {/* default / home */}
           <Route path="/Tasks" element={<TasksPage />} />
           <Route path="/Habits" element={<HabitsPage />} />
+          <Route path="/Rewards" element={<RewardsPage />} />
         </Route>
 
         <Route element={<GuestRoute />}>
