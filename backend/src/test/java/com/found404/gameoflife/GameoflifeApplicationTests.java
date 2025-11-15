@@ -1,10 +1,10 @@
-package com._Found.GameOfLife;
+package com.found404.gameoflife;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class GameOfLifeApplicationTests {
+class GameoflifeApplicationTests {
 
 	@Test
 	void contextLoads() {
