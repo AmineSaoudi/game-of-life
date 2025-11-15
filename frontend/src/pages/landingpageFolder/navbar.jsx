@@ -1,5 +1,8 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
+
+
 
 const Navbar = () => {
   return (
@@ -12,9 +15,9 @@ const Navbar = () => {
 
         {/* Right side: nav buttons */}
         <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button color="inherit">Home</Button>
-          <Button color="inherit">Rewards</Button>
-          <Button color="inherit">Game</Button>
+          <Button color="inherit" component={RouterLink} to="/">Home </Button>
+          <Button color="inherit" component={RouterLink} to="/Tasks">Tasks </Button>
+          <Button color="inherit" component={RouterLink} to="/Habits">Habits</Button>
         </Box>
       </Toolbar>
     </AppBar>

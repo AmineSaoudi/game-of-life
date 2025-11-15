@@ -3,7 +3,7 @@ import { Toolbar } from '@mui/material';
 import { Routes, Route } from 'react-router-dom';
 
 import LandingPage from './pages/landingpageFolder/landingpage.jsx';
-import TasksPage from "./pages/TasksPage/TasksPage.jsx"
+import TasksPage from "./pages/TasksPage/tasksPage.jsx"
 import HabitsPage from "./pages/HabitsPage/habitsPage.jsx"
 
 function App() {

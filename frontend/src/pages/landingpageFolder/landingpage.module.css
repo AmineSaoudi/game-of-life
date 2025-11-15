@@ -1,5 +1,5 @@
 .mainBox {
-  min-height: 100vh;
+  min-height: 95vh;
   width: 100%;
   background-image:
     radial-gradient(circle at 0% 0%, rgba(255, 244, 214, 0.7) 0, transparent 55%),   /* soft warm light */

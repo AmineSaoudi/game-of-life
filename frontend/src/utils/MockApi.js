@@ -7,7 +7,6 @@ export const mockTasksAPI = {
     if (!userId) throw new Error('userId required');
 
     // fake network delay
-    await new Promise((r) => setTimeout(r, 150));
 
     // right now this file is already "tasks for that user",
     // so just return everything. Later you can filter by userId.

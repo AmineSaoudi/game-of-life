@@ -18,9 +18,9 @@
     "description": "Stretching exercises twice a week to improve flexibility.", 
     "difficulty": 1, 
     "targetPerWeek": 2, 
-    "completed": false, 
+    "completed": true, 
     "createdAt": "2025-11-01T10:05:00Z", 
-    "completedAt": null,
+    "completedAt": "2025-11-01T10:07:00Z",
     "points": "25"
 
 }, 
