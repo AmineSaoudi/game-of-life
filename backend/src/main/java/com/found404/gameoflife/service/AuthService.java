@@ -6,7 +6,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.found404.gameoflife.dto.AuthResponseDTO;
 import com.found404.gameoflife.entity.User;
+import com.found404.gameoflife.mapper.UserMapper;
 import com.found404.gameoflife.repository.UserRepository;
 
 import lombok.AllArgsConstructor;
@@ -23,20 +25,25 @@ public class AuthService {
 
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
-    public String register(User user) {
-        user.setPassword(encoder.encode(user.getPassword()));
-        userRepository.save(user);
-        return jwtService.generateToken(user.getUsername());
+    private final UserMapper userMapper;
 
+    public AuthResponseDTO register(User user) {
+        user.setPassword(encoder.encode(user.getPassword()));
+        User newUser = userRepository.save(user);
+        return new AuthResponseDTO(jwtService.generateToken(user.getUsername()), userMapper.toDto(newUser));
     }
 
-    public String verify(User user) {
+    public AuthResponseDTO verify(User user) {
         Authentication authentication = authManager
                 .authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-        if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(user.getUsername());
-        } else {
-            return "fail";
+        if (!authentication.isAuthenticated()) {
+            throw new RuntimeException("Invalid credentials");
         }
+
+        User dbUser = userRepository.findByUsername(user.getUsername())
+                .orElseThrow(() -> new IllegalStateException("User not found after authentication"));
+
+        return new AuthResponseDTO(jwtService.generateToken(user.getUsername()), userMapper.toDto(dbUser));
     }
+
 }
