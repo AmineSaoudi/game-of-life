@@ -1,27 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Typography, Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions, 
-    Collapse, Slide } from "@mui/material";
+    Collapse } from "@mui/material";
 import TaskCard from "./TaskCard"; 
+import { taskApiCalls } from "../../utils/Api.js"
 
 export default function TasksPage() {
-  // Example tasks 
-  const [tasks, setTasks] = useState([
-    // this will be json data from backend
-    {
-      id: 1,
-      title: "Take out the garbage",
-      description: "Before 8pm",
-      dueDate: "2025-11-15",
-      points: 10,
-      completed: false,
-    },
-    {
-      id: 2,
-      title: "Finish homework",
-      points: 20,
-      completed: false,
-    }
-  ]);
+  const [tasks, setTasks] = useState([]);
+  const [error, setError] = useState("");
+
+  useEffect (() => {
+    const fetchTasks = async () => {
+      try {
+        const data = await taskApiCalls.getSingleTasks();
+        console.log(data);
+        setTasks(data);
+      }
+      catch (e) {
+        setError(e);
+        console.error("failed to load task", error);
+      }
+    };
+
+    fetchTasks();
+  }, []);
 
   // --Popup window for adding new task logic--
 
@@ -71,7 +72,7 @@ export default function TasksPage() {
     // Remove after animation finishes (same as Collapse timeout)
     setTimeout(() => {
         setTasks(tasks => tasks.filter(task => task.id !== taskId));
-    }, 400);
+    }, 300);
   };
 
   // --Filtering task type logic--
@@ -127,8 +128,6 @@ export default function TasksPage() {
         </Typography>
       </Box>
 
-
-      {/* REFORMAT THIS */}
       {/* Filter Bar */}
       <Box 
         sx={{
@@ -166,26 +165,62 @@ export default function TasksPage() {
       ))}
       </Box>
 
-
-
-      {/* Add Task Button */}
-      <Box textAlign="right" mt={3} mr={10}>
-        <Button variant="contained" sx={{
-            bgcolor: '#9049A4',
-            color: '#F0C5FD'
+      {/* Container for task list and components box */}
+      <Box sx={{ 
+        display: "flex",
+        gap: 4,
+        px: 5,
+        mt: 3
         }}
-        onClick={handleOpen}>
-          Add Task
-        </Button>
-      </Box>
-
-      {/* Task List */}
-      <Box sx={{ width: '100%', px: 5 }}>
+      >
+        {/* Task List */}
+        <Box sx={{ width: '50%' }}>
         {tasks.filter(filterTasks).map(task => (
             <Collapse key={task.id} in={!task.completed} timeout={300}>
                 <TaskCard task={task} onComplete={handleComplete} />
             </Collapse>
         ))}
+        </Box>
+
+        <Box sx={{
+            width: '50%',
+            minHeight: "300px",
+            bgcolor: "#F4E6FF",
+            borderRadius: 3,
+            boxShadow: "0px 4px 12px rgba(0,0,0,0.15)",
+            border: "2px solid #A66CC7",
+            p: 3
+        }}>
+            <Box textAlign="left" mt={1}>
+              {/* Add Task Button */}
+              <Button
+                onClick={handleOpen}
+                sx={{
+                  background: "#7A2E8E",
+                  color: "#F7D8FF",
+                  fontFamily: "'Press Start 2P', cursive",
+                  fontSize: "14px",
+                  px: 4,
+                  py: 2,
+                  border: "3px solid #C38BFF",
+                  boxShadow: "0px 4px 0px #4D1B5B",
+                  textTransform: "none",
+                  transition: "0.2s",
+                  "&:hover": {
+                    background: "#8E3DA3",
+                    transform: "translateY(-2px)",
+                    boxShadow: "0px 6px 0px #4D1B5B"
+                  },
+                  "&:active": {
+                    transform: "translateY(1px)",
+                    boxShadow: "0px 2px 0px #4D1B5B"
+                  }
+                }}
+              >
+                + Add Task
+              </Button>
+            </Box>
+        </Box>
       </Box>
 
       {/* Add Task Popup Form */}

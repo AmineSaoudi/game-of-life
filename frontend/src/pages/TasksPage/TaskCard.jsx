@@ -7,7 +7,7 @@ export default function TaskCard({ task, onComplete }) {
       sx={{
         marginBottom: 2,
         padding: 0.5,
-        width: "30%",
+        width: "100%",
         bgcolor: "#E2CFFE",
         color: "#7A2E8E",
         border: "2px solid #e7b1f7ff",
@@ -23,12 +23,16 @@ export default function TaskCard({ task, onComplete }) {
     >
       <CardContent>
         {/* Task title and checkbox container. So that they're on the same line. */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
 
           {/* Task Title */}
           <Typography variant="h6" sx={{
             fontFamily: "'Press Start 2P', cursive",
-            fontSize: "15px"
+            fontSize: "15px",
+            flexGrow: 1,
+            wordBreak: "break-word",
+            overflowWrap: "break-word",
+            whiteSpace: "normal"
           }}
           >
             {task.title}
@@ -40,6 +44,7 @@ export default function TaskCard({ task, onComplete }) {
             sx={{
               width: 30,
               height: 30,
+              flexShrink: 0,
               bgcolor: task.completed ? "green" : "#faf6fbff",
               borderRadius: 0.5,
               border: "2px solid #e7b1f7ff",
