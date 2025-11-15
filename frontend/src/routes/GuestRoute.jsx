@@ -1,10 +1,9 @@
 // import { useUserContext } from "@/context/UserContext";
 import { Navigate, Outlet, useLocation } from "react-router";
+import { useAuthContext } from "../context/AuthContext";
 
 export default function GuestRoute() {
-  //   const { user, loading } = useUserContext();
-  const [user, setUser] = useState("amine");
-  const [loading, setLoading] = useState(false);
+  const { user, loading } = useAuthContext();
   const location = useLocation();
 
   if (loading) return <h1 className="text-center">loading</h1>;

@@ -9,10 +9,11 @@ import Login from "./pages/Login/Login.jsx";
 import Signup from "./pages/Signup/Signup.jsx";
 import AuthRoute from "./routes/AuthRoute.jsx";
 import GuestRoute from "./routes/GuestRoute.jsx";
+import { AuthProvider } from "./context/AuthContext.jsx";
 
 function App() {
   return (
-    <>
+    <AuthProvider>
       <Navbar />
       <Toolbar />
       <Routes>
@@ -27,7 +28,7 @@ function App() {
           <Route path="/signup" element={<Signup />} />
         </Route>
       </Routes>
-    </>
+    </AuthProvider>
   );
 }
 export default App;
