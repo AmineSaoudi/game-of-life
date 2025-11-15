@@ -78,7 +78,7 @@ const SingleTasksCard = ({ currentUser }) => {
     <Paper
       elevation={4}
       sx={{
-        mt: 1,
+        m: 1,
         borderRadius: 3,
         p: 1.5,
         maxWidth: 600,
