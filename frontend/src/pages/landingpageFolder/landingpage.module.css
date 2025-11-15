@@ -18,8 +18,8 @@
 
   display: flex;
   flex-direction: column;   /* 🔑 stack header, text, button vertically */
-  align-items: center;      /* center horizontally */
-  justify-content: center;  /* center vertically */
+  align-items: left;      /* center horizontally */
+  justify-content: flex-start;  /* center vertically */
 
   padding-inline: 16px;
   box-sizing: border-box;
