@@ -38,6 +38,15 @@ public class JWTFilter extends OncePerRequestFilter {
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
+            try {
+                username = jwtService.extractUsername(token);
+            } catch (io.jsonwebtoken.JwtException ex) {
+                // signature invalid, token malformed, expired, etc.
+                // Optionally log at debug/warn, but DO NOT rethrow.
+                // Just treat as unauthenticated:
+                filterChain.doFilter(request, response);
+                return;
+            }
             username = jwtService.extractUsername(token);
         }
 

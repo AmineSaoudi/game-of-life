@@ -16,6 +16,14 @@ public class DbUserPrincipal implements UserDetails {
 
     private final User user;
 
+    public Integer getId() {
+        return user.getId();
+    }
+
+    public User getUser() {
+        return user;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(new SimpleGrantedAuthority("USER"));
