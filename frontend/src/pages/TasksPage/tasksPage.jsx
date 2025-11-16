@@ -166,7 +166,7 @@ export default function TasksPage() {
                 bgcolor: filter === section ? "#9049A4" : "#EFD7FF",
                 color: filter === section ? "white" : "#5A3C7A",
                 fontWeight: "bold",
-                borderRight: section !== "overdue" ? "2px solid #CBA8EF" : "none",
+                borderRight: section !== "completed" ? "2px solid #CBA8EF" : "none",
                 transition: "0.25s",
                 "&:hover": {
                 bgcolor: filter === section ? "#7a3b90" : "#dcbfff"
