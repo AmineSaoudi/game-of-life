@@ -29,7 +29,6 @@ const apiCall = async (endpoint, options = {}) => {
     return data;
   } catch (error) {
     console.error('API Error:', error);
-    throw error;
   }
 };
 
@@ -92,8 +91,31 @@ export const taskApiCalls = {
 
 };
 
+
+export const rewardApiCalls = {
+  getRewards: async () => {
+    const rewards = await apiCall("/rewards");
+    return (rewards || [])
+  },
+  createReward: async (rewardCreateReq) => {
+    return apiCall("/rewards", { method: 'POST', body: JSON.stringify(rewardCreateReq)})
+  },
+
+  buyReward: async (rewardId) => {
+    return apiCall(`/rewards/${rewardId}/purchase`, { method: 'POST'})
+  },
+
+  deleteReward: async (rewardId) => {
+    return apiCall(`/rewards/${rewardId}`, { method: 'DELETE'})
+    
+  }
+
+}
+
 // optional default export if you like importing the whole API as one object
 export default {
   userApiCalls,
   taskApiCalls,
+  rewardApiCalls
+  
 };

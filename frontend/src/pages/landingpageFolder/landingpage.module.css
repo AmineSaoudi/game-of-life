@@ -1,26 +1,41 @@
-.mainBox {
-  min-height: 95vh;
-  width: 100%;
-  background-image:
-    radial-gradient(circle at 0% 0%, rgba(255, 244, 214, 0.7) 0, transparent 55%),   /* soft warm light */
-    radial-gradient(circle at 100% 0%, rgba(253, 186, 116, 0.55) 0, transparent 55%),/* peach */
-    radial-gradient(circle at 0% 100%, rgba(248, 113, 113, 0.45) 0, transparent 55%),/* warm coral */
-    radial-gradient(circle at 100% 100%, rgba(238, 36, 66, 0.5) 0, transparent 60%),
-    linear-gradient(
-      135deg,
-      #f97316 0%,   /* orange */
-      #fbbf24 30%,  /* golden yellow */
-      #ef4444 100%  /* warm red */
-    );
-
-  background-attachment: fixed;
-  background-size: cover;
-
+.pageWrapper {
+  min-height: 100vh;
+  padding: 32px 48px;
+  /* Purple-ish gradient background */
+  background: linear-gradient(135deg, #d7afff 0%, #b29dff 30%, #dcd4ff 65%, #eac5ff 100%);
   display: flex;
-  flex-direction: column;   /* 🔑 stack header, text, button vertically */
-  align-items: left;      /* center horizontally */
-  justify-content: flex-start;  /* center vertically */
+  flex-direction: column;
+}
 
-  padding-inline: 16px;
-  box-sizing: border-box;
+/* Main two-column area */
+.mainContent {
+  display: flex;
+  gap: 24px;
+  flex: 1;
+}
+
+/* Left: tasks & habits stacked */
+.leftColumn {
+  flex: 1.4;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Right: progress + title stacked */
+.rightColumn {
+  flex: 1;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-self: flex-start;
+}
+
+/* Bottom quote centered */
+.quoteWrapper {
+  margin-top: 32px;
+  align-self: center;
+  width: 100%;
+  max-width: 720px;
 }

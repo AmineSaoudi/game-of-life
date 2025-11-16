@@ -55,13 +55,14 @@ export default function TasksPage() {
   // logic for opening and closing the add task popup window
   const handleOpen = () => setOpen(true);
 
-  // when done creating a new task, reset new task fiels to empty
+  // when done creating a new task, reset new task fields to empty
   // to accomodate next new task
   const handleClose = () => {
     setNewTask(initialTaskState);
     setOpen(false);
   };
 
+  // adds a new task
   const handleAddTask = async () => {
     if (!newTask.title.trim()) return; // doesn't add new task if title is empty
 
@@ -85,6 +86,19 @@ export default function TasksPage() {
     } catch (error) {
       console.error("Failed to create task:", error);
       setError(error.message || "Task creation failed");
+    }
+  };
+
+  // deletes a task
+  const handleDeleteTask = async (taskId) => {
+    try {
+      await taskApiCalls.deleteTask(taskId);
+
+      // Reload tasks to reflect deletion
+      const updatedTasks = await taskApiCalls.getSingleTasks();
+      setTasks(updatedTasks);
+    } catch (err) {
+      console.error("Failed to delete task:", err);
     }
   };
 
@@ -134,8 +148,9 @@ export default function TasksPage() {
     // Container for page
     <Box
       sx={{
+        mt:2,
         width: "100%",
-        minHeight: "100vh",
+        minHeight: "90vh",
         boxSizing: "border-box",
         overflowX: "hidden", // prevent horizontal scroll
         background: "linear-gradient(180deg, #fbfbfdff 0%, #e1cffcff 100%)",
@@ -190,8 +205,7 @@ export default function TasksPage() {
                 bgcolor: filter === section ? "#9049A4" : "#EFD7FF",
                 color: filter === section ? "white" : "#5A3C7A",
                 fontWeight: "bold",
-                borderRight:
-                  section !== "overdue" ? "2px solid #CBA8EF" : "none",
+                borderRight: section !== "completed" ? "2px solid #CBA8EF" : "none",
                 transition: "0.25s",
                 "&:hover": {
                   bgcolor: filter === section ? "#7a3b90" : "#dcbfff",
@@ -224,10 +238,15 @@ export default function TasksPage() {
                   key={task.id}
                   task={task}
                   onComplete={handleComplete}
+                  onDelete={handleDeleteTask}
                 />
               ) : (
                 <Collapse key={task.id} in={!task.completed} timeout={300}>
-                  <TaskCard task={task} onComplete={handleComplete} />
+                  <TaskCard 
+                    task={task}
+                    onComplete={handleComplete} 
+                    onDelete={handleDeleteTask}
+                   />
                 </Collapse>
               )
             )}
