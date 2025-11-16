@@ -1,10 +1,24 @@
 .pageWrapper {
   min-height: 100vh;
   padding: 32px 48px;
-  /* Purple-ish gradient background */
-  background: linear-gradient(135deg, #d7afff 0%, #b29dff 30%, #dcd4ff 65%, #eac5ff 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(180deg, #fbfbfd 0%, #e1cffc 100%);
+}
+
+/* Big central retro card */
+.mainCard {
+  width: 100%;
+  max-width: 1200px;
+  background: #f4e6ff;
+  border-radius: 28px;
+  border: 3px solid #9049a4;
+  box-shadow: 0px 8px 20px rgba(77, 27, 91, 0.25);
+  padding: 28px 32px 32px;
   display: flex;
   flex-direction: column;
+  gap: 24px;
 }
 
 /* Main two-column area */
@@ -32,10 +46,29 @@
   align-self: flex-start;
 }
 
-/* Bottom quote centered */
+/* Bottom quote centered inside the card */
 .quoteWrapper {
-  margin-top: 32px;
+  margin-top: 8px;
   align-self: center;
   width: 100%;
   max-width: 720px;
+}
+
+/* Responsive: stack columns on smaller screens */
+@media (max-width: 960px) {
+  .pageWrapper {
+    padding: 24px 16px;
+  }
+
+  .mainCard {
+    padding: 20px 18px 24px;
+  }
+
+  .mainContent {
+    flex-direction: column;
+  }
+
+  .rightColumn {
+    max-width: none;
+  }
 }

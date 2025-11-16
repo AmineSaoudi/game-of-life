@@ -21,54 +21,62 @@ const MotivationQuote = () => {
   return (
     <Box
       sx={{
-        position: "fixed",
-        bottom: 0,
-        right: 0,
-        width: "50vw",
-        height: "50vh",
-        zIndex: (theme) => theme.zIndex.drawer + 1,
+        position: "relative",
+        bottom: 250,
+        right: 200,
+        left: 520,
+
+        /* Matching MainTitle box visual style */
+        padding: "20px 30px",
+        borderRadius: "20px",
+        background: "rgba(255, 255, 255, 0.25)",
+        backdropFilter: "blur(6px)",
+        border: "3px solid rgba(255, 255, 255, 0.45)",
+        boxShadow: "0px 6px 18px rgba(77, 27, 91, 0.25)",
+
+        /* same skew for retro vibe */
+        transform: "skewX(-2deg)",
+
+        width: "fit-content",
+        maxWidth: "400px",
+
         display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        p: 4,
-        boxSizing: "border-box",
-        pointerEvents: "none", // does not block clicks
+        flexDirection: "column",
+        gap: "6px",
+        pointerEvents: "none",
       }}
     >
-      <Box sx={{ pointerEvents: "auto", maxWidth: "100%" }}>
-        {/* QUOTE TEXT */}
-        <Typography
-          variant="h4"
-          sx={{
-            fontFamily: "Inter, sans-serif",
-            fontStyle: "italic",
-            fontWeight: 400,
-            fontSize: { xs: "1.2rem", md: "1.6rem", lg: "1.9rem" },
-            color: "var(--color-text-main)",
-            opacity: 0.9,
+      {/* QUOTE TEXT */}
+      <Typography
+        variant="h5"
+        sx={{
+          fontFamily: "'Nunito', sans-serif",
+          fontStyle: "italic",
+          fontWeight: 600,
+          fontSize: { xs: "1.1rem", md: "1.25rem", lg: "1.35rem" },
+          color: "#3b214f",
+          opacity: 0.9,
+          textAlign: "center",
+          textShadow: "0 4px 12px rgba(108, 76, 207, 0.2)",
+        }}
+      >
+        “{quote.text}”
+      </Typography>
 
-            // subtle shadow to give it depth like the title
-            textShadow: "0 4px 12px rgba(108, 76, 207, 0.15)",
-            mb: 1.5,
-          }}
-        >
-          “{quote.text}”
-        </Typography>
-
-        {/* AUTHOR */}
-        <Typography
-          variant="subtitle1"
-          sx={{
-            fontFamily: "Poppins, sans-serif",
-            fontWeight: 600,
-            fontSize: { xs: "0.9rem", md: "1.1rem" },
-            color: "var(--color-primary-dark)",
-            opacity: 0.85,
-          }}
-        >
-          — {quote.author}
-        </Typography>
-      </Box>
+      {/* AUTHOR */}
+      <Typography
+        variant="subtitle2"
+        sx={{
+          fontFamily: "'Press Start 2P', cursive",
+          fontSize: { xs: "0.6rem", md: "0.7rem" },
+          color: "#7A2E8E",
+          opacity: 0.85,
+          textAlign: "center",
+          letterSpacing: "1px",
+        }}
+      >
+        — {quote.author}
+      </Typography>
     </Box>
   );
 };

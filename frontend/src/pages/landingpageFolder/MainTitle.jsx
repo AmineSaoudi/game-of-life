@@ -5,29 +5,30 @@ const MainTitle = () => {
   return (
     <Box
       sx={{
-        position: "fixed",
-        bottom: 330,
-        right: 150,
-        zIndex: 10,
+        background: "#F4E6FF",
+        border: "3px solid #9049A4",
+        borderRadius: "20px",
+        padding: "20px 28px",
+        boxShadow: "0px 6px 15px rgba(77, 27, 91, 0.25)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
       }}
     >
       <Typography
         variant="h1"
         sx={{
-          fontFamily: "Poppins, sans-serif",
-          fontSize: { xs: "2.2rem", md: "3.4rem", lg: "4rem" },
-          fontWeight: 700,
-          letterSpacing: "0.05em",
-          lineHeight: 1.1,
-          textAlign: { xs: "left", md: "right" },
+          fontFamily: "'Press Start 2P', cursive",
+          fontSize: { xs: "1.4rem", md: "1.9rem", lg: "2.2rem" },
+          fontWeight: 400,
+          letterSpacing: "0.07em",
+          lineHeight: 1.3,
+          textAlign: "center",
 
-          // Modern purple gradient title
-          WebkitBackgroundClip: "text",
-          backgroundClip: "text",
-          color: "var(--color-primary)",
+          color: "#7A2E8E",
+          textShadow: "0px 3px 0px #4D1B5B",
 
-          // Softer, more elegant shadow
-          textShadow: "0 4px 12px rgba(108, 76, 207, 0.25)",
+          padding: "8px 0",
         }}
       >
         GAME OF LIFE
