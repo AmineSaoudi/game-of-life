@@ -13,51 +13,51 @@ import {
   Stack,
   Grid,
   Slider,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
+import { alpha } from "@mui/material/styles";
 
-// This component is intentionally self-contained for now.
-// Later we can move API logic into a separate "habitsService" file if you want.
+// Map difficulty (1–5) to color from green → red
+function getDifficultyColor(difficulty) {
+  // difficulty 1 -> ratio 0 (green), 5 -> ratio 1 (red)
+  const ratio = (difficulty - 1) / 4;
+  const hue = 120 - 120 * ratio; // 120° = green, 0° = red
+  return `hsl(${hue}, 80%, 50%)`;
+}
 
 export default function HabitsPage() {
   // ---------------------------------------------------------------------------
   // STATE
   // ---------------------------------------------------------------------------
 
-  // All habits for the current user.
   // Shape of each habit:
   // {
-  //   id: string | number,
-  //   name: string,
-  //   timesPerWeek: number,
-  //   difficulty: number (0-5),
-  //   description?: string,
-  //   weeklyCount: number (how many times done THIS week),
+  //   id,
+  //   name,
+  //   timesPerWeek,
+  //   difficulty (1-5),
+  //   description,
+  //   weeklyCount,   // how many times completed THIS week
   // }
   const [habits, setHabits] = useState([]);
 
-  // Dialog open/close state
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
-  // Form fields for the "Create Habit" dialog
   const [newName, setNewName] = useState("");
   const [newTimesPerWeek, setNewTimesPerWeek] = useState("");
-  const [newDifficulty, setNewDifficulty] = useState(3); // default mid difficulty
+  const [newDifficulty, setNewDifficulty] = useState(3); // 1–5
   const [newDescription, setNewDescription] = useState("");
 
-  // Simple validation error display
   const [errors, setErrors] = useState({});
 
   // ---------------------------------------------------------------------------
-  // INITIAL LOAD: fetch habits from backend (later) or local storage (for now).
+  // INITIAL LOAD: get habits from backend (later) or localStorage (now)
   // ---------------------------------------------------------------------------
   useEffect(() => {
-    // TODO: API – replace this whole block with a real API call, e.g.:
-    //   const res = await fetch("/api/habits/me");
-    //   const data = await res.json();
-    //   setHabits(data);
-    //
-    // For now, we can try to load from localStorage so the page feels persistent.
-
+    // TODO: API – replace this with GET /api/habits for the logged-in user.
     const saved = localStorage.getItem("habitsState");
     if (saved) {
       try {
@@ -70,22 +70,20 @@ export default function HabitsPage() {
   }, []);
 
   // ---------------------------------------------------------------------------
-  // SAVE HABITS LOCALLY whenever they change (temporary persistence)
+  // SAVE to localStorage when habits change (temporary persistence)
   // ---------------------------------------------------------------------------
   useEffect(() => {
     const stateToSave = { habits };
     localStorage.setItem("habitsState", JSON.stringify(stateToSave));
 
-    // TODO: API – in the real app, instead of (or in addition to) localStorage:
-    //   await fetch("/api/habits/bulk-update", { method: "PUT", body: JSON.stringify(habits) })
-    // Or more realistically, you will:
-    //   - POST when creating a habit
-    //   - PATCH when updating a habit
-    // so you won't need this effect at all.
+    // TODO: API – in the real app:
+    //   - POST /api/habits when creating a habit
+    //   - PATCH /api/habits/:id when updating
+    // so this effect will eventually not be needed.
   }, [habits]);
 
   // ---------------------------------------------------------------------------
-  // HANDLERS: open/close dialog
+  // DIALOG OPEN/CLOSE
   // ---------------------------------------------------------------------------
 
   const openCreateDialog = () => {
@@ -102,7 +100,7 @@ export default function HabitsPage() {
   };
 
   // ---------------------------------------------------------------------------
-  // HANDLER: submit new habit
+  // CREATE HABIT
   // ---------------------------------------------------------------------------
 
   const handleCreateHabit = async () => {
@@ -111,61 +109,84 @@ export default function HabitsPage() {
     if (!newName.trim()) {
       newErrors.name = "Name is required";
     }
+
     const times = Number(newTimesPerWeek);
     if (!times || times <= 0) {
       newErrors.timesPerWeek = "Times per week must be a positive number";
     }
 
-    if (newDifficulty < 0 || newDifficulty > 5) {
-      newErrors.difficulty = "Difficulty must be between 0 and 5";
+    if (newDifficulty < 1 || newDifficulty > 5) {
+      newErrors.difficulty = "Difficulty must be between 1 and 5";
     }
 
     setErrors(newErrors);
-    if (Object.keys(newErrors).length > 0) {
-      return;
-    }
+    if (Object.keys(newErrors).length > 0) return;
 
-    // Construct the habit object that matches what the backend expects.
     const habitPayload = {
       name: newName.trim(),
       timesPerWeek: times,
       difficulty: newDifficulty,
       description: newDescription.trim() || null,
-      weeklyCount: 0, // starts at 0 for the current week
-      // Later you might also include userId, createdAt, etc.
+      weeklyCount: 0,
     };
 
     // -----------------------------------------------------------------------
-    // TODO: API – Create habit on backend
+    // TODO: API – create habit in backend
     // -----------------------------------------------------------------------
-    // Example with fetch:
-    //
+    // Example:
     //   const res = await fetch("/api/habits", {
     //     method: "POST",
     //     headers: { "Content-Type": "application/json" },
     //     body: JSON.stringify(habitPayload),
     //   });
-    //
-    //   if (!res.ok) {
-    //     // Handle error (show snackbar, error text, etc.)
-    //     return;
-    //   }
-    //
-    //   // The backend should respond with the created habit (with its id).
     //   const createdHabit = await res.json();
     //
     //   setHabits((prev) => [...prev, createdHabit]);
     //
-    // For now, since we don't have a real backend hooked up,
-    // we will just fake an id and update local state:
-
-    const fakeId = Date.now(); // DO NOT use this in production, backend should give real id
+    // TEMP: fake id in frontend only:
+    const fakeId = Date.now();
     const createdHabit = { id: fakeId, ...habitPayload };
 
     setHabits((prev) => [...prev, createdHabit]);
 
-    // Close dialog after success
     closeCreateDialog();
+  };
+
+  // ---------------------------------------------------------------------------
+  // LOG HABIT COMPLETION (check circle)
+  // ---------------------------------------------------------------------------
+
+  const handleLogHabit = async (habitId) => {
+    setHabits((prev) =>
+      prev.map((habit) => {
+        if (habit.id !== habitId) return habit;
+
+        // If habit already reached its weekly goal, do nothing (closed for week).
+        if (habit.weeklyCount >= habit.timesPerWeek) {
+          return habit;
+        }
+
+        const updated = {
+          ...habit,
+          weeklyCount: habit.weeklyCount + 1,
+        };
+
+        // -------------------------------------------------------------------
+        // TODO: API – log this completion in backend:
+        //   POST /api/habits/:id/log
+        // Backend should:
+        //   - increment weekly count for this habit
+        //   - add points (difficulty * 10) to:
+        //       * daily points
+        //       * total points
+        //     so the Rewards page can read updated values.
+        //
+        // You might also GET the updated habit and totals back in the response.
+        // -------------------------------------------------------------------
+
+        return updated;
+      })
+    );
   };
 
   // ---------------------------------------------------------------------------
@@ -173,64 +194,140 @@ export default function HabitsPage() {
   // ---------------------------------------------------------------------------
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box
+      sx={{
+        p: 3,
+        bgcolor: "white", // page background white
+        minHeight: "100vh",
+      }}
+    >
       <Grid container spacing={3}>
-        {/* LEFT SIDE: habit list */}
-        <Grid item xs={12} md={8}>
+        {/* LEFT: habits list (wider) */}
+        <Grid item xs={12} md={9}>
           <Stack spacing={2}>
-            <Typography variant="h5" sx={{ fontWeight: 700 }}>
+            <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
               Habits
             </Typography>
 
-            {/* List of habit cards */}
             {habits.length === 0 ? (
               <Typography color="text.secondary">
                 You don't have any habits yet. Click "Create Habit +" to get started.
               </Typography>
             ) : (
-              habits.map((habit) => (
-                <Card
-                  key={habit.id}
-                  sx={{
-                    borderRadius: 2,
-                    border: "2px solid #0097a7", // teal-ish, like your sketch
-                  }}
-                >
-                  <CardContent>
-                    {/* Habit title */}
-                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
-                      {habit.name}
-                    </Typography>
+              habits.map((habit) => {
+                const color = getDifficultyColor(habit.difficulty || 1);
+                const isClosed = habit.weeklyCount >= habit.timesPerWeek;
 
-                    {/* Description, if provided */}
-                    {habit.description && (
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ mb: 0.5 }}
+                return (
+                  <Card
+                    key={habit.id}
+                    sx={{
+                      borderRadius: 2,
+                      border: `2px solid ${color}`,
+                      backgroundColor: "white", // card background white
+                    }}
+                  >
+                    <CardContent>
+                      <Stack
+                        direction="row"
+                        spacing={2}
+                        alignItems="flex-start"
+                        justifyContent="space-between"
                       >
-                        {habit.description}
-                      </Typography>
-                    )}
+                        {/* LEFT: title + description + weekly info */}
+                        <Box sx={{ flex: 1 }}>
+                          <Typography
+                            variant="h6"
+                            sx={{
+                              fontWeight: 600,
+                              mb: 0.5,
+                              color: isClosed ? "text.disabled" : "text.primary",
+                            }}
+                          >
+                            {habit.name}
+                          </Typography>
 
-                    {/* Times per week + placeholder for weekly counter */}
-                    <Typography variant="body2">
-                      {habit.timesPerWeek} times per week
-                    </Typography>
+                          {habit.description && (
+                            <Typography
+                              variant="body2"
+                              color={isClosed ? "text.disabled" : "text.secondary"}
+                              sx={{ mb: 0.5 }}
+                            >
+                              {habit.description}
+                            </Typography>
+                          )}
 
-                    {/* TODO: When we add the check-circle, we'll also show:
-                        - "X times this week"
-                        - Maybe a mini progress bar for this habit.
-                        - And logic to reset weeklyCount every week. */}
-                  </CardContent>
-                </Card>
-              ))
+                          <Typography
+                            variant="body2"
+                            sx={{ mb: 0.3 }}
+                            color={isClosed ? "text.disabled" : "text.primary"}
+                          >
+                            {habit.timesPerWeek} times per week
+                          </Typography>
+
+                          <Typography
+                            variant="body2"
+                            sx={{ mb: 0.3 }}
+                            color={isClosed ? "text.disabled" : "text.primary"}
+                          >
+                            {habit.weeklyCount} / {habit.timesPerWeek} times this week
+                          </Typography>
+
+                          <Typography
+                            variant="body2"
+                            color={isClosed ? "text.disabled" : color}
+                          >
+                            Difficulty: {habit.difficulty}/5
+                          </Typography>
+                        </Box>
+
+                        {/* RIGHT: check circle to log completion */}
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <Tooltip
+                            title={
+                              isClosed
+                                ? "Goal reached for this week"
+                                : "Click when you complete this habit"
+                            }
+                          >
+                            <span>
+                              <IconButton
+                                onClick={() => handleLogHabit(habit.id)}
+                                disabled={isClosed}
+                                sx={{
+                                  // tint background a bit with the difficulty color
+                                  bgcolor: alpha(color, 0.06),
+                                  "&:hover": {
+                                    bgcolor: alpha(color, 0.15),
+                                  },
+                                }}
+                              >
+                                {isClosed ? (
+                                  <CheckCircleIcon sx={{ color }} />
+                                ) : (
+                                  <RadioButtonUncheckedIcon sx={{ color }} />
+                                )}
+                              </IconButton>
+                            </span>
+                          </Tooltip>
+                        </Box>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                );
+              })
             )}
           </Stack>
         </Grid>
 
-        {/* RIGHT SIDE: Create Habit button (for now; later we can add quotes, etc.) */}
-        <Grid item xs={12} md={4}>
+        {/* RIGHT: create habit button (narrower column) */}
+        <Grid item xs={12} md={3}>
           <Box
             sx={{
               display: "flex",
@@ -251,9 +348,9 @@ export default function HabitsPage() {
               Create Habit +
             </Button>
 
-            {/* TODO: In the future, add:
+            {/* TODO: later add:
                 - Motivational quote card
-                - "Points until next milestone" bar at the bottom of the page */}
+                - "Points until next milestone" bar */}
           </Box>
         </Grid>
       </Grid>
@@ -290,14 +387,14 @@ export default function HabitsPage() {
             inputProps={{ min: 1 }}
           />
 
-          {/* Difficulty slider 0–5 */}
+          {/* Difficulty slider 1–5 */}
           <Box sx={{ mt: 2 }}>
             <Typography variant="subtitle2" gutterBottom>
-              Difficulty (0–5)
+              Difficulty (1–5)
             </Typography>
             <Slider
               value={newDifficulty}
-              min={0}
+              min={1}
               max={5}
               step={1}
               marks
