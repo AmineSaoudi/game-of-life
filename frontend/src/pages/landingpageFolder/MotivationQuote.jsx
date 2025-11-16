@@ -35,7 +35,7 @@ const MotivationQuote = () => {
         pointerEvents: 'none', // so it doesn't block clicks
       }}
     >
-      <Box sx={{ pointerEvents: 'auto', maxWidth: 420 }}>
+      <Box sx={{ pointerEvents: 'auto', maxWidth: "100%" }}>
         <Typography
           variant="h4"
           sx={{

@@ -42,19 +42,36 @@ export const userApiCalls = {
 // ---- TASKS (current user inferred from auth) ----
 export const taskApiCalls = {
   // all tasks for the currently logged-in user
-  getTasks: async () =>  apiCall('/tasks'),
+  getTasks: async () => {
+    const tasks = await apiCall('/tasks');
+
+    // add points = difficulty * 10
+    return (tasks || []).map((task) => ({
+      ...task,
+      points: (task.difficulty ?? 0) * 10,
+    }));
+  },
 
   // only tasks where type === "NON_RECURRING"
   getSingleTasks: async () => {
-    const tasks = await apiCall('/tasks'); // array of tasks for current user
-    return tasks.filter((task) => task.type === 'NON_RECURRING');
-
+    const tasks = await apiCall('/tasks');
+    return (tasks || [])
+      .filter((task) => task.type === 'NON_RECURRING')
+      .map((task) => ({
+        ...task,
+        points: (task.difficulty ?? 0) * 10,
+      }));
   },
 
   // only tasks where type === "RECURRING"
   getHabitTasks: async () => {
     const tasks = await apiCall('/tasks');
-    return tasks.filter((task) => task.type === 'RECURRING');
+    return (tasks || [])
+      .filter((task) => task.type === 'RECURRING')
+      .map((task) => ({
+        ...task,
+        points: (task.difficulty ?? 0) * 10,
+      }));
   },
 
   //*****CREATIONAL TASKS*****

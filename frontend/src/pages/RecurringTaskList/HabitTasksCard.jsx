@@ -11,7 +11,7 @@ import {
   Typography,
 } from '@mui/material';
 
-const SingleTasksCard = () => {
+const HabitTasksCard = () => {
   const [error, setError] = useState("");
 
   
@@ -42,13 +42,14 @@ const SingleTasksCard = () => {
       <Paper
         elevation={4}
         sx={{
-          mt: 1,
+          m: 1,
           borderRadius: 3,
           p: 2,
           width: { xs: '100%', sm: 600 },
           maxWidth: '100%',
           bgcolor: 'rgba(255, 248, 240, 0.9)',
           backdropFilter: 'blur(4px)',
+          boxSizing: 'border-box',
         }}
       >
         <Typography variant="h6" sx={{ mb: 1, fontWeight: 'bold' }}>
@@ -67,6 +68,7 @@ const visibleTasks = tasks.slice(0, 3);
         m: 1,
         borderRadius: 3,
         p: 1.5,
+        maxWidth: "100%",
         width: { xs: '100%', sm: 600 },
         bgcolor: 'rgba(255, 248, 240, 0.9)',
         backdropFilter: 'blur(4px)',
@@ -129,4 +131,4 @@ const visibleTasks = tasks.slice(0, 3);
   );
 };
 
-export default SingleTasksCard;
+export default HabitTasksCard;
