@@ -215,15 +215,22 @@ export default function TasksPage() {
       >
         {/* Task List */}
         <Box sx={{ width: "50%" }}>
-          {tasks.filter(filterTasks).map((task) =>
-            filter === "completed" ? (
-              <TaskCard key={task.id} task={task} onComplete={handleComplete} />
-            ) : (
-              <Collapse key={task.id} in={!task.completed} timeout={300}>
-                <TaskCard task={task} onComplete={handleComplete} />
-              </Collapse>
-            )
-          )}
+          {tasks
+            .filter(filterTasks)
+            .sort((a, b) => b.id - a.id) // newest completed first
+            .map((task) =>
+              filter === "completed" ? (
+                <TaskCard
+                  key={task.id}
+                  task={task}
+                  onComplete={handleComplete}
+                />
+              ) : (
+                <Collapse key={task.id} in={!task.completed} timeout={300}>
+                  <TaskCard task={task} onComplete={handleComplete} />
+                </Collapse>
+              )
+            )}
         </Box>
 
         <Box
