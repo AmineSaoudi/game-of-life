@@ -45,22 +45,31 @@ export default function TasksPage() {
     setOpen(false);
   };
 
-  const handleAddTask = () => {
+  const handleAddTask = async () => {
     if (!newTask.title.trim()) return; // doesn't add new task if title is empty
 
     const newTaskObject = {
-      // date used to ensure unique ids (assuming tasks not being created near simultaneously)
-      id: Date.now(),
       title: newTask.title,
       description: newTask.description,
       dueDate: newTask.dueDate,
-      points: Number(newTask.points),
-      completed: false
+      //points: Number(newTask.points),
+      difficulty: 2,
+      type: "NON_RECURRING"
     };
 
     // update the tasks list with the new task
-    setTasks([...tasks, newTaskObject]);
-    handleClose();
+    try {
+      await taskApiCalls.createTask(newTaskObject);
+
+      // reload from DB
+      const updatedTasks = await taskApiCalls.getSingleTasks();
+      setTasks(updatedTasks);
+
+      handleClose();
+    } catch (error) {
+      console.error("Failed to create task:", error);
+      setError(error.message || "Task creation failed");
+    }
   };
 
   // updates completed field of given task when box is checked
