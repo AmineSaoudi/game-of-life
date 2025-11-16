@@ -1,10 +1,12 @@
 import React from "react";
-import { Card, CardContent, Typography, Box } from "@mui/material";
+import { Card, CardContent, Typography, Box, Button } from "@mui/material";
 
-export default function TaskCard({ task, onComplete }) {
+export default function TaskCard({ task, onComplete, onDelete }) {
+  
   return (
     <Card
       sx={{
+        position: "relative",
         marginBottom: 2,
         padding: 0.5,
         width: "100%",
@@ -21,6 +23,34 @@ export default function TaskCard({ task, onComplete }) {
         transition: "all 0.2s ease-in-out",
       }}
     >
+      {/* Delete button */}
+      <Button
+        variant="outlined"
+        size="small"
+        onClick={() => onDelete(task.id)}
+        sx={{
+          position: "absolute",
+          bottom: 10,
+          right: 10,
+          borderColor: "#7A2E8E",
+          color: "#f2edf4ff",
+          bgcolor: "#f43b3bff",
+          textTransform: "none",
+          fontSize: "12px",
+          padding: "2px 8px",
+          borderRadius: "8px",
+          "&:hover": {
+            borderColor: "#7A2E8E",
+            color: "white",
+            backgroundColor: "#f82020ff",
+            transform: "scale(1.03)",
+          },
+          transition: "all 0.2s ease",
+        }}
+      >
+        Delete
+      </Button>
+
       <CardContent>
         {/* Task title and checkbox container. So that they're on the same line. */}
         <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
