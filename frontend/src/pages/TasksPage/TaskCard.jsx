@@ -77,7 +77,7 @@ export default function TaskCard({ task, onComplete }) {
 
         {/* Task Description */}
         {task.description && (
-          <Typography variant="body2" color="#8e40a2ff" sx={{ mt: 1 }}>
+          <Typography variant="body2" color="#8e40a2ff" sx={{ mt: 0.5 }}>
             {task.description}
           </Typography>
         )}
@@ -93,6 +93,10 @@ export default function TaskCard({ task, onComplete }) {
         {/* Associated points/difficulty level */}
         <Typography sx={{ mt: 1 }}>
           Points: <b>{task.points}</b>
+        </Typography>
+
+        <Typography sx={{ mt: 0.5 }}>
+          Difficulty: <b>{task.difficulty}</b>/5
         </Typography>
 
         {/* Task Frequency (for habit tasks) */}

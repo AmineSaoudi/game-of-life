@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions, 
-    Collapse } from "@mui/material";
+    Collapse, MenuItem, Select, FormControl, InputLabel } from "@mui/material";
 import TaskCard from "./TaskCard"; 
 import { taskApiCalls } from "../../utils/Api.js"
 
@@ -28,20 +28,23 @@ export default function TasksPage() {
 
   // controls popup visibility
   const [open, setOpen] = useState(false); 
-  // initially fields of new task are empty
-  const [newTask, setNewTask] = useState({
+
+  const initialTaskState = {
     title: "",
     description: "",
     dueDate: "",
-    points: ""
-  })
+    difficulty: 1  // always a number
+  };
+  // initially fields of new task are empty
+  const [newTask, setNewTask] = useState(initialTaskState);
 
   // logic for opening and closing the add task popup window
   const handleOpen = () => setOpen(true);
+
   // when done creating a new task, reset new task fiels to empty
   // to accomodate next new task
   const handleClose = () => {
-    setNewTask({ title: "", description: "", dueDate: "", points: "" });
+    setNewTask(initialTaskState);
     setOpen(false);
   };
 
@@ -52,8 +55,7 @@ export default function TasksPage() {
       title: newTask.title,
       description: newTask.description,
       dueDate: newTask.dueDate,
-      //points: Number(newTask.points),
-      difficulty: 2,
+      difficulty: newTask.difficulty,
       type: "NON_RECURRING"
     };
 
@@ -263,14 +265,20 @@ export default function TasksPage() {
             onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
           />
 
-          <TextField
-            margin="dense"
-            label="Point Value"
-            type="number"
-            fullWidth
-            value={newTask.points}
-            onChange={(e) => setNewTask({ ...newTask, points: e.target.value })}
-          />
+        <FormControl fullWidth margin="dense">
+          <InputLabel>Difficulty</InputLabel>
+          <Select
+            value={newTask.difficulty}
+            label="Difficulty"
+            onChange={(e) => setNewTask({ ...newTask, difficulty: Number(e.target.value) })}
+            required
+          >
+            {[1, 2, 3, 4, 5].map(num => (
+              <MenuItem key={num} value={num}>{num}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
         </DialogContent>
 
         <DialogActions>
