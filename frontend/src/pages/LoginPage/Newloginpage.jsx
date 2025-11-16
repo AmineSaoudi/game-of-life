@@ -57,7 +57,7 @@ const LoginPage = () => {
     <Box
       sx={{
         minHeight: "100vh",
-        bgcolor: "#f5f5f5",
+        background: "linear-gradient(180deg, #fbfbfd 0%, #e1cffc 100%)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -65,19 +65,52 @@ const LoginPage = () => {
       }}
     >
       <Paper
-        elevation={3}
+        elevation={6}
         sx={{
-          maxWidth: 400,
+          maxWidth: 420,
           width: "100%",
           p: 4,
-          borderRadius: 2,
+          borderRadius: "24px",
+          backgroundColor: "#f4e6ff",
+          border: "3px solid #9049a4",
+          boxShadow: "0px 8px 20px rgba(77, 27, 91, 0.25)",
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
         }}
       >
-        <Typography variant="h5" component="h1" gutterBottom align="center">
-          Login
+        {/* GAME TITLE */}
+        <Typography
+          component="h1"
+          sx={{
+            fontFamily: "'Press Start 2P', cursive",
+            fontSize: "1.4rem",
+            textAlign: "center",
+            color: "#7A2E8E",
+            textShadow: "0px 3px 0px #4d1b5b",
+            letterSpacing: "2px",
+            mb: 1,
+          }}
+        >
+          GAME OF LIFE
         </Typography>
 
-        <Box component="form" onSubmit={handleSubmit} noValidate>
+        {/* Subtitle */}
+        <Typography
+          variant="subtitle1"
+          sx={{
+            textAlign: "center",
+            fontFamily: "'Nunito', system-ui, sans-serif",
+            fontWeight: 600,
+            color: "#3b214f",
+            mb: 1,
+          }}
+        >
+          Log in to continue your streak ✨
+        </Typography>
+
+        {/* FORM */}
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <TextField
             label="Username"
             fullWidth
@@ -85,6 +118,12 @@ const LoginPage = () => {
             margin="normal"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "12px",
+                backgroundColor: "#ffffff",
+              },
+            }}
           />
 
           <TextField
@@ -95,10 +134,25 @@ const LoginPage = () => {
             margin="normal"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "12px",
+                backgroundColor: "#ffffff",
+              },
+            }}
           />
 
           {error && (
-            <Typography color="error" variant="body2" sx={{ mt: 1, mb: 1 }}>
+            <Typography
+              color="error"
+              variant="body2"
+              sx={{
+                mt: 1,
+                mb: 1,
+                textAlign: "center",
+                fontFamily: "'Nunito', system-ui, sans-serif",
+              }}
+            >
               {error}
             </Typography>
           )}
@@ -107,10 +161,28 @@ const LoginPage = () => {
             type="submit"
             variant="contained"
             fullWidth
-            sx={{ mt: 2 }}
             disabled={loading}
+            sx={{
+              mt: 2,
+              py: 1.2,
+              fontFamily: "'Press Start 2P', cursive",
+              fontSize: "0.75rem",
+              textTransform: "none",
+              backgroundColor: "#7A2E8E",
+              border: "3px solid #C38BFF",
+              boxShadow: "0px 4px 0px #4D1B5B",
+              "&:hover": {
+                backgroundColor: "#8E3DA3",
+                transform: "translateY(-2px)",
+                boxShadow: "0px 6px 0px #4D1B5B",
+              },
+              "&:active": {
+                transform: "translateY(1px)",
+                boxShadow: "0px 2px 0px #4D1B5B",
+              },
+            }}
           >
-            Log In
+            {loading ? "Logging in..." : "Log In"}
           </Button>
         </Box>
       </Paper>
