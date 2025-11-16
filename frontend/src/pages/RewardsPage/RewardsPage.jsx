@@ -14,7 +14,6 @@ import {
 } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
-import EditIcon from "@mui/icons-material/Edit";
 import { alpha } from "@mui/material/styles";
 
 import { userApiCalls, taskApiCalls } from "../../utils/Api";
@@ -46,11 +45,9 @@ const isCompletedToday = (task) => {
 
 
 const RewardsDashboard = () => {
-  // ---------------------- POINTS STATE --------------------------------------
   const [dailyPoints, setDailyPoints] = useState(0);
   const [totalPoints, setTotalPoints] = useState(0);
 
-  // ---------------------- REWARD TEXT STATE ---------------------------------
   const [dailyRewards, setDailyRewards] = useState({
     100: "Take a 15-minute break to do something you enjoy",
     250: "Watch an episode of your favorite show",
@@ -64,8 +61,7 @@ const RewardsDashboard = () => {
     2000: "Bigger reward: new headphones, shoes, or a mini day trip",
   });
 
-  // ---------------------- CLAIMED STATE -------------------------------------
-  // object keyed by milestone: { "100": true, "250": false, ... }
+
   const [claimedDaily, setClaimedDaily] = useState({});
   const [claimedLT, setClaimedLT] = useState({});
 
@@ -242,11 +238,6 @@ const RewardsDashboard = () => {
                       </IconButton>
                     </Tooltip>
 
-                    {/* EDIT ICON (visual only for now) */}
-                    <IconButton size="small" sx={{ opacity: 0.6 }}>
-                      <EditIcon fontSize="small" />
-                    </IconButton>
-
                     {/* Editable reward text */}
                     <TextField
                       size="small"
@@ -354,7 +345,7 @@ const RewardsDashboard = () => {
                         handleLTRewardChange(m, e.target.value)
                       }
                       placeholder="Describe your reward"
-                      slotProps={{
+                      InputProps={{
                         sx: {
                           transition: "all 0.2s ease",
                           textDecoration: claimed ? "line-through" : "none",
