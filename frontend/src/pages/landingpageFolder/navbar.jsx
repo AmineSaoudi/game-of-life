@@ -49,7 +49,7 @@ const Navbar = () => {
               {[
                 { label: "Home", to: "/" },
                 { label: "Tasks", to: "/Tasks" },
-                { label: "Habits", to: "/Habits" },
+                //{ label: "Habits", to: "/Habits" },
                 { label: "Rewards", to: "/Rewards" },
               ].map((item) => (
                 <Button
