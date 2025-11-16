@@ -75,15 +75,17 @@ export default function TasksPage() {
   };
 
   // updates completed field of given task when box is checked
-  const handleComplete = (taskId) => {
-    setTasks(tasks.map(task =>
-      (task.id === taskId) ? { ...task, completed: true } : task
-    ));
+  const handleComplete = async (taskId) => {
+    try {
+      await taskApiCalls.updateTask(taskId, { completed: true });
 
-    // Remove after animation finishes (same as Collapse timeout)
-    setTimeout(() => {
-        setTasks(tasks => tasks.filter(task => task.id !== taskId));
-    }, 300);
+      // Reload tasks so "Completed" tab shows them correctly
+      const updatedTasks = await taskApiCalls.getSingleTasks();
+      setTasks(updatedTasks);
+
+    } catch (err) {
+      console.error("Failed to complete task:", err);
+    }
   };
 
   // --Filtering task type logic--
@@ -98,19 +100,19 @@ export default function TasksPage() {
 
     switch(filter) {
         case "today":
-        return due && due.toDateString() === now.toDateString();
+          return due && due.toDateString() === now.toDateString();
         case "upcoming":
-        return due && (due - now) > 0 && (due - now) <= 14 * 24 * 60 * 60 * 1000;
+          return due && (due - now) > 0 && (due - now) <= 14 * 24 * 60 * 60 * 1000;
         case "future":
-        return due && (due - now) > 14 * 24 * 60 * 60 * 1000;
-        case "ongoing":
-        return !due;
+          return due && (due - now) > 14 * 24 * 60 * 60 * 1000;
         case "overdue":
-        return due && (due < now) && !task.completed;
+          return due && (due < now) && !task.completed;
+        case "completed":
+          return task.completed === true;
         default:
-        return true;
+          return true;
     }
-  }
+  };
 
   return (
     // Container for page
@@ -151,7 +153,7 @@ export default function TasksPage() {
           boxShadow: "0 3px 10px rgba(0,0,0,0.15)"
         }}
       >
-      {["today", "upcoming", "future", "ongoing", "overdue"].map(section => (
+      {["today", "upcoming", "future", "overdue", "completed"].map(section => (
         <Box
             key={section}
             onClick={() => setFilter(section)}
@@ -187,9 +189,13 @@ export default function TasksPage() {
         {/* Task List */}
         <Box sx={{ width: '50%' }}>
         {tasks.filter(filterTasks).map(task => (
+          filter === "completed" ? (
+            <TaskCard key={task.id} task={task} onComplete={handleComplete} />
+          ) : (
             <Collapse key={task.id} in={!task.completed} timeout={300}>
-                <TaskCard task={task} onComplete={handleComplete} />
+              <TaskCard task={task} onComplete={handleComplete} />
             </Collapse>
+          )
         ))}
         </Box>
 

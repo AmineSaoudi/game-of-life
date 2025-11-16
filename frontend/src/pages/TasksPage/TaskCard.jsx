@@ -83,12 +83,11 @@ export default function TaskCard({ task, onComplete }) {
         )}
 
         {/* Task Due Date */}
-        {task.duedate && (
-          <Typography variant = "body2" color="#8e40a2ff" sx={{ mt: 1 }}>
-            {task.duedate}
+        {task.dueDate && (
+          <Typography variant="body2" color="#8e40a2ff" sx={{ mt: 0.5 }}>
+            Due: {task.dueDate}
           </Typography>
-        )
-        }
+        )}
 
         {/* Associated points/difficulty level */}
         <Typography sx={{ mt: 1 }}>
