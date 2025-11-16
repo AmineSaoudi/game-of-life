@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { rewardApiCalls } from "../../utils/Api";
+
 import {
   Box,
   Typography,
@@ -14,18 +16,16 @@ import {
   Tooltip,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 //import { rewardApiCalls } from "../../utils/Api";
 import { useAuthContext } from "../../context/AuthContext";  // 👈 NEW
-const initialRewardState = { name: "", description: "", cost: 100 };
+const initialRewardState = { name: "", description: "", price: 100 };
 
 export default function RewardsMarket() {
   const { user, setUser } = useAuthContext();            // 👈 from context
 
   const [rewards, setRewards] = useState([]);
-  const [points, setPoints] = useState(user?.points ?? 0); // 👈 start from user
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -34,9 +34,9 @@ export default function RewardsMarket() {
   const [rewardForm, setRewardForm] = useState(initialRewardState);
 
   // keep local points in sync when user changes (e.g. after login)
-  useEffect(() => {
-    setPoints(user?.points ?? 0);
-  }, [user]);
+  // useEffect(() => {
+  //   setPoints(user?.points ?? 0);
+  // }, [user]);
 
   // only load rewards from backend
   useEffect(() => {
@@ -68,18 +68,15 @@ export default function RewardsMarket() {
   };
 
   const handleBuy = async (reward) => {
-    if (!reward || reward.cost > points) return;
+    if (!reward || reward.price > user.points) return;
 
     try {
-      await rewardApiCalls.buyReward(reward.id);
+      const updateduser = await rewardApiCalls.buyReward(reward.id);
+      setUser(updateduser)
+      
 
       // 👇 update user in context so navbar shows new points
-      setUser((prev) =>
-        prev ? { ...prev, points: prev.points - reward.cost } : prev
-      );
-
-      // 👇 update local points used in this page
-      setPoints((prev) => prev - reward.cost);
+      
 
       await reloadRewards();
     } catch (e) {
@@ -98,9 +95,9 @@ export default function RewardsMarket() {
   const openEditDialog = (reward) => {
     setEditingReward(reward);
     setRewardForm({
-      name: reward.name || "",
+      title: reward.name || "",
       description: reward.description || "",
-      cost: reward.cost ?? 100,
+      price: reward.price ?? 100,
     });
     setDialogOpen(true);
   };
@@ -115,9 +112,9 @@ export default function RewardsMarket() {
     if (!rewardForm.name.trim()) return;
 
     const payload = {
-      name: rewardForm.name.trim(),
+      title: rewardForm.name.trim(),
       description: rewardForm.description.trim(),
-      cost: Number(rewardForm.cost) || 0,
+      price: Number(rewardForm.price) || 0,
     };
 
     try {
@@ -183,7 +180,7 @@ export default function RewardsMarket() {
         <Typography mt={2} fontSize="18px" sx={{ fontFamily: "'Press Start 2P', cursive" }}>
           Your Points:{" "}
           <span style={{ color: "#3b7b3f" }}>
-            {loading ? "..." : points}
+            {loading ? "..." : user.points}
           </span>
         </Typography>
       </Box>
@@ -249,19 +246,19 @@ export default function RewardsMarket() {
                       variant="body2"
                       sx={{ mt: 1, fontWeight: "bold", color: "#7A2E8E" }}
                     >
-                      Cost: {reward.cost} pts
+                      Cost: {reward.price} pts
                     </Typography>
                   </Box>
 
                   <Stack direction="row" spacing={1} alignItems="center">
                     <Tooltip
-                      title={points < reward.cost ? "Not enough points" : "Buy reward"}
+                      title={user.points < reward.price ? "Not enough points" : "Buy reward"}
                     >
                       <span>
                         <Button
                           variant="contained"
                           startIcon={<ShoppingCartIcon />}
-                          disabled={points < reward.cost}
+                          disabled={user.points < reward.price}
                           onClick={() => handleBuy(reward)}
                           sx={{
                             textTransform: "none",
@@ -274,11 +271,6 @@ export default function RewardsMarket() {
                       </span>
                     </Tooltip>
 
-                    <Tooltip title="Edit">
-                      <IconButton onClick={() => openEditDialog(reward)} size="small">
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
 
                     <Tooltip title="Delete">
                       <IconButton
@@ -372,7 +364,7 @@ export default function RewardsMarket() {
             label="Cost (points)"
             type="number"
             fullWidth
-            value={rewardForm.cost}
+            value={rewardForm.price}
             onChange={handleChangeField("cost")}
             inputProps={{ min: 1 }}
           />
