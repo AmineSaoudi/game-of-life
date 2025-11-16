@@ -1,6 +1,7 @@
 package com.found404.gameoflife.dto;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 import com.found404.gameoflife.enums.TaskType;
 
@@ -11,7 +12,8 @@ public record TaskResponseDTO(
         String description,
         Integer difficulty,
         Integer targetPerWeek,
-        boolean completed,
+        Boolean completed,
         Instant createdAt,
-        Instant completedAt) {
+        Instant completedAt,
+        LocalDate dueDate) {
 }

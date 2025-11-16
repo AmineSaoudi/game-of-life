@@ -1,3 +1,5 @@
+import { useAuthContext } from "../context/AuthContext";
+
 // src/utils/Api.js
 const API_BASE_URL = 'http://10.121.13.65:3000/api';
 
@@ -36,11 +38,12 @@ export const userApiCalls = {
   // all users (if your backend supports this)
 
   // current logged-in user (adjust to /me or /auth/me if that's your backend)
-  getCurrentUser: async () =>  apiCall('/auth/me'),
+  getCurrentUser: async () => apiCall('/auth/me'),
 };
 
 // ---- TASKS (current user inferred from auth) ----
 export const taskApiCalls = {
+
   // all tasks for the currently logged-in user
   getTasks: async () => {
     const tasks = await apiCall('/tasks');
@@ -75,16 +78,16 @@ export const taskApiCalls = {
   },
 
   //*****CREATIONAL TASKS*****
-  createTask: async(taskCreateReq)=> {
-    return apiCall("/tasks", { method: 'POST', body: JSON.stringify(taskCreateReq)})
+  createTask: async (taskCreateReq) => {
+    return apiCall("/tasks", { method: 'POST', body: JSON.stringify(taskCreateReq) })
   },
   //*****UPDATE TASKS*****
-  updateTask: async(taskId, taskPatchReq) => {
-    return apiCall(`/tasks/${taskId}`, {method: 'PATCH', body: JSON.stringify(taskPatchReq)})
+  updateTask: async (taskId, taskPatchReq) => {
+    return apiCall(`/tasks/${taskId}`, { method: 'PATCH', body: JSON.stringify(taskPatchReq) })
   },
   //*****DELETE TASKS*****
-  deleteTask: async(taskId) => {
-    return apiCall(`/tasks/${taskId}`, {method: 'DELETE'})
+  deleteTask: async (taskId) => {
+    return apiCall(`/tasks/${taskId}`, { method: 'DELETE' })
   }
 
 };

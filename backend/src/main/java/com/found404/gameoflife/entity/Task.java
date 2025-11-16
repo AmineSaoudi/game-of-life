@@ -1,6 +1,7 @@
 package com.found404.gameoflife.entity;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 import com.found404.gameoflife.enums.TaskType;
 
@@ -58,6 +59,7 @@ public class Task {
      * For HABIT: how many times per week is the goal?
      * For SINGLE: null.
      */
+    @Column(name = "target_per_week")
     private Integer targetPerWeek;
 
     /**
@@ -65,13 +67,17 @@ public class Task {
      * For HABIT: you can either ignore it or use it for “archived”.
      */
     @Column(nullable = false)
-    private boolean completed = false;
+    private Boolean completed = false;
+
+    @Column(name = "due_date")
+    private LocalDate dueDate;
 
     /** When the task was created */
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false, name = "created_at")
     private Instant createdAt;
 
     /** For SINGLE: when it was completed (optional) */
+    @Column(name = "completed_at")
     private Instant completedAt;
 
     @PrePersist
