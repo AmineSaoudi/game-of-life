@@ -4,6 +4,8 @@ import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import { ThemeProvider, createTheme } from '@mui/material';
 import App from './App.jsx';
+import './styles/theme.css';
+
 
 const theme = createTheme({
   palette: {
