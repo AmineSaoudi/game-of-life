@@ -105,7 +105,7 @@ const ProgressCard = () => {
           <LinearProgress
             variant="determinate"
             value={percent}
-            sx={{ height: 10, borderRadius: 5 }}
+            sx={{ height: 10, borderRadius: 5, transition: 'all 0.5s ease-in-out' }}
           />
 
           <Box sx={{ mt: 0.5, textAlign: 'right' }}>
