@@ -15,6 +15,7 @@ import {
   InputLabel,
 } from "@mui/material";
 import TaskCard from "./TaskCard";
+import ProgressCard from "../landingpageFolder/ProgressCard.jsx";
 import { taskApiCalls } from "../../utils/Api.js";
 import { useAuthContext } from "../../context/AuthContext.jsx";
 
@@ -153,7 +154,7 @@ export default function TasksPage() {
         minHeight: "90vh",
         boxSizing: "border-box",
         overflowX: "hidden", // prevent horizontal scroll
-        background: "linear-gradient(180deg, #fbfbfdff 0%, #e1cffcff 100%)",
+        background: "linear-gradient(180deg, #fbfbfdff 0%, #e1cffcff 100%)"
       }}
     >
       {/* Title Card */}
@@ -166,6 +167,7 @@ export default function TasksPage() {
           border: "3px solid #9049A4",
           fontFamily: "'Press Start 2P', cursive",
           mb: 3,
+          mt: 1
         }}
       >
         <Typography
@@ -292,6 +294,12 @@ export default function TasksPage() {
               + Add Task
             </Button>
           </Box>
+          
+          {/* Progress Card */}
+          <Box mt={4}>
+            <ProgressCard key={tasks.filter(t => t.completed).length} />
+          </Box>
+
         </Box>
       </Box>
 

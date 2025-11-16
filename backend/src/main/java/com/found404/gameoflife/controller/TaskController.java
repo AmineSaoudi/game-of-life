@@ -43,14 +43,14 @@ public class TaskController {
         return taskService.createTaskForUser(userId, taskReq);
     }
 
-    @PatchMapping("/{id}")
-    public TaskResponseDTO editTask(@PathVariable Integer id, @RequestBody TaskPatchDTO task) {
-        return taskService.editById(id, task);
+    @PatchMapping("/{taskId}")
+    public TaskResponseDTO editTask(@PathVariable Integer taskId, @RequestBody TaskPatchDTO task) {
+        return taskService.editById(taskId, task);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBook(@PathVariable Integer id) {
-        taskService.deleteById(id);
+    @DeleteMapping("/{taskId}")
+    public ResponseEntity<Void> deleteReward(@PathVariable Integer taskId) {
+        taskService.deleteById(taskId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
