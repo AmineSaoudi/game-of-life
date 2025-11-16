@@ -33,6 +33,9 @@ const Navbar = () => {
               <Button color="inherit" component={RouterLink} to="/Habits">
                 Habits
               </Button>
+              <Button color="inherit" component={RouterLink} to="/Rewards">
+                Rewards
+              </Button>
               <Button color="inherit" component={RouterLink} onClick={onLogout}>
                 Logout
               </Button>
