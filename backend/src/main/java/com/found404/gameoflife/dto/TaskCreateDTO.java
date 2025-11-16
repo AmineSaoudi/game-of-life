@@ -10,10 +10,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record TaskCreateDTO(
-        @NotBlank String title,
-        @NotNull TaskType type,
-        @NotBlank String description,
-        @NotNull @Min(1) @Max(5) Integer difficulty,
-        Integer targetPerWeek,
-        LocalDate dueDate) {
+                @NotBlank String title,
+                @NotNull TaskType type,
+                String description,
+                @NotNull @Min(1) @Max(5) Integer difficulty,
+                Integer targetPerWeek,
+                LocalDate dueDate) {
 }

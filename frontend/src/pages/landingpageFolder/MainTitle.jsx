@@ -1,33 +1,36 @@
-import React from 'react';
-import { Box, Typography } from '@mui/material';
+import React from "react";
+import { Box, Typography } from "@mui/material";
 
 const MainTitle = () => {
   return (
     <Box
       sx={{
-        position: 'fixed',
+        position: "fixed",
         bottom: 330,
         right: 150,
+        zIndex: 10,
       }}
     >
       <Typography
         variant="h1"
         sx={{
-          fontSize: { xs: '2.4rem', md: '3.6rem', lg: '4.2rem' },
-          fontWeight: 900,
-          lineHeight: 1.05,
-          textAlign: { xs: 'left', md: 'right' },
-          letterSpacing: '0.08em',
-          textTransform: 'uppercase',
-          background: 'linear-gradient(135deg, #ffffff, #ffe6c7)',
-          WebkitBackgroundClip: 'text',
-          backgroundClip: 'text',
-          color: 'transparent',
-          textShadow: '0 10px 30px rgba(0,0,0,0.25)',
+          fontFamily: "Poppins, sans-serif",
+          fontSize: { xs: "2.2rem", md: "3.4rem", lg: "4rem" },
+          fontWeight: 700,
+          letterSpacing: "0.05em",
+          lineHeight: 1.1,
+          textAlign: { xs: "left", md: "right" },
+
+          // Modern purple gradient title
+          WebkitBackgroundClip: "text",
+          backgroundClip: "text",
+          color: "var(--color-primary)",
+
+          // Softer, more elegant shadow
+          textShadow: "0 4px 12px rgba(108, 76, 207, 0.25)",
         }}
       >
         GAME OF LIFE
-        {/* change to your app name */}
       </Typography>
     </Box>
   );

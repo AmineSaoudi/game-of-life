@@ -1,5 +1,5 @@
 // src/components/ProgressCard.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Paper,
   Box,
@@ -7,12 +7,12 @@ import {
   LinearProgress,
   Stack,
   CircularProgress,
-} from '@mui/material';
-import { taskApiCalls } from '../../utils/Api';
+} from "@mui/material";
+import { taskApiCalls } from "../../utils/Api";
 
 const ProgressCard = () => {
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [totalPoints, setTotalPoints] = useState(0);
   const [completedPoints, setCompletedPoints] = useState(0);
 
@@ -20,13 +20,12 @@ const ProgressCard = () => {
     const loadTasks = async () => {
       try {
         setLoading(true);
-        setError('');
+        setError("");
 
         const singleTasks = await taskApiCalls.getSingleTasks();
 
-        // assume each task has a `points` field; fall back to 1 if not
         const getPoints = (task) =>
-          typeof task.points === 'number' ? task.points : 1;
+          typeof task.points === "number" ? task.points : 1;
 
         const total = singleTasks.reduce(
           (sum, task) => sum + getPoints(task),
@@ -40,8 +39,8 @@ const ProgressCard = () => {
         setTotalPoints(total);
         setCompletedPoints(completed);
       } catch (err) {
-        console.error('Failed to load single tasks:', err);
-        setError('Failed to load single tasks');
+        console.error("Failed to load single tasks:", err);
+        setError("Failed to load single tasks");
       } finally {
         setLoading(false);
       }
@@ -55,15 +54,17 @@ const ProgressCard = () => {
 
   return (
     <Paper
-      elevation={4}
+      elevation={0}
       sx={{
-        m: 1,
-        p: 2,
-        borderRadius: 3,
-        width: { xs: '100%', sm: 400 },
-        bgcolor: 'rgba(255,255,255,0.9)',
-        backdropFilter: 'blur(4px)',
-        boxSizing: 'border-box',
+        m: 0,
+        mb: 2,
+        p: 2.5,
+        borderRadius: "16px",
+        width: { xs: "260px", sm: "300px", md: "320px" },
+        backgroundColor: "var(--color-surface)",
+        boxShadow: "var(--shadow-soft)",
+        border: "1px solid var(--color-border-subtle)",
+        boxSizing: "border-box",
       }}
     >
       {loading ? (
@@ -73,7 +74,7 @@ const ProgressCard = () => {
           justifyContent="center"
           spacing={1}
         >
-          <CircularProgress size={20} />
+          <CircularProgress size={18} />
           <Typography variant="body2">Loading single-task progress…</Typography>
         </Stack>
       ) : error ? (
@@ -88,16 +89,25 @@ const ProgressCard = () => {
         <>
           <Typography
             variant="subtitle2"
-            sx={{ textTransform: 'uppercase', color: 'text.secondary', mb: 1 }}
+            sx={{
+              fontFamily: "Poppins, sans-serif",
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+              color: "var(--color-text-muted)",
+              mb: 1,
+            }}
           >
             Single Tasks Progress
           </Typography>
 
           <Box sx={{ mb: 1 }}>
-            <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+            <Typography
+              variant="body1"
+              sx={{ fontWeight: 600, color: "var(--color-text-main)" }}
+            >
               {completedPoints} / {totalPoints} points
             </Typography>
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" sx={{ color: "var(--color-text-muted)" }}>
               of Single Tasks have been completed
             </Typography>
           </Box>
@@ -105,11 +115,18 @@ const ProgressCard = () => {
           <LinearProgress
             variant="determinate"
             value={percent}
-            sx={{ height: 10, borderRadius: 5, transition: 'all 0.5s ease-in-out' }}
+            sx={{
+              height: 8,
+              borderRadius: 999,
+              backgroundColor: "#EDEBFA",
+              "& .MuiLinearProgress-bar": {
+                backgroundColor: "var(--color-primary)",
+              },
+            }}
           />
 
-          <Box sx={{ mt: 0.5, textAlign: 'right' }}>
-            <Typography variant="caption" color="text.secondary">
+          <Box sx={{ mt: 0.75, textAlign: "right" }}>
+            <Typography variant="caption" sx={{ color: "var(--color-text-muted)" }}>
               {percent}%
             </Typography>
           </Box>

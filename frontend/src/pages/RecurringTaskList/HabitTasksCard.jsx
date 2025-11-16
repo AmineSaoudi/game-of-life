@@ -1,6 +1,5 @@
-import React from 'react';
-import { taskApiCalls } from "../../utils/Api.js"
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
+import { taskApiCalls } from "../../utils/Api.js";
 import {
   Paper,
   List,
@@ -9,118 +8,184 @@ import {
   Chip,
   Stack,
   Typography,
-} from '@mui/material';
+} from "@mui/material";
 
 const HabitTasksCard = () => {
   const [error, setError] = useState("");
-
-  
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
         const data = await taskApiCalls.getHabitTasks();
-        console.log('User tasks:', data);
+        console.log("User habit tasks:", data);
         setTasks(data || []);
       } catch (err) {
         setError(err);
-        console.error('Failed to load tasks:', err);
+        console.error("Failed to load habit tasks:", err);
       }
     };
 
-    fetchTasks(); // actually run the async function
+    fetchTasks();
   }, []);
 
-  // For now, show something even if there are no tasks, so you can SEE the card
-  if (error) {
-    return <Typography color="error">Failed to load tasks</Typography>;
-  }
+  const cardStyles = {
+    m: 1,
+    borderRadius: "16px",
+    p: 2,
+    width: { xs: "100%", sm: 600 },
+    maxWidth: "100%",
+    backgroundColor: "var(--color-surface)",
+    boxShadow: "var(--shadow-soft)",
+    border: "1px solid var(--color-border-subtle)",
+    boxSizing: "border-box",
+    alignSelf: "flex-start",
+  };
 
-  if (!tasks.length) {
+  // error state
+  if (error) {
     return (
-      <Paper
-        elevation={4}
-        sx={{
-          m: 1,
-          borderRadius: 3,
-          p: 2,
-          width: { xs: '100%', sm: 600 },
-          maxWidth: '100%',
-          bgcolor: 'rgba(255, 248, 240, 0.9)',
-          backdropFilter: 'blur(4px)',
-          boxSizing: 'border-box',
-        }}
-      >
-        <Typography variant="h6" sx={{ mb: 1, fontWeight: 'bold' }}>
-          Habitual Tasks
+      <Paper elevation={0} sx={cardStyles}>
+        <Typography color="error" variant="body2">
+          Failed to load habitual tasks
         </Typography>
-        <Typography variant="body2">No single tasks found.</Typography>
       </Paper>
     );
   }
-const visibleTasks = tasks.slice(0, 3);
+
+  // no tasks state
+  if (!tasks.length) {
+    return (
+      <Paper elevation={0} sx={cardStyles}>
+        <Typography
+          variant="subtitle1"
+          sx={{
+            mb: 1.5,
+            fontFamily: "Poppins, sans-serif",
+            fontWeight: 600,
+            color: "var(--color-text-main)",
+          }}
+        >
+          Habitual Tasks
+        </Typography>
+        <Typography variant="body2" sx={{ color: "var(--color-text-muted)" }}>
+          No habitual tasks found.
+        </Typography>
+      </Paper>
+    );
+  }
+
+  const visibleTasks = tasks.slice(0, 3);
 
   return (
-    <Paper
-      elevation={4}
-      sx={{
-        m: 1,
-        borderRadius: 3,
-        p: 1.5,
-        maxWidth: "100%",
-        width: { xs: '100%', sm: 600 },
-        bgcolor: 'rgba(255, 248, 240, 0.9)',
-        backdropFilter: 'blur(4px)',
-        height: 'auto',          // ensure content-based height
-        alignSelf: 'flex-start', // don't stretch if parent is flex
-        boxSizing: 'border-box',
-        }}
-    >
+    <Paper elevation={0} sx={cardStyles}>
       <Typography
-        variant="subtitle1"          // was h6
-        sx={{ mb: 1, fontWeight: 'bold' }}
+        variant="subtitle1"
+        sx={{
+          mb: 1.5,
+          fontFamily: "Poppins, sans-serif",
+          fontWeight: 600,
+          color: "var(--color-text-main)",
+        }}
       >
         Habitual Tasks
       </Typography>
 
-      <List disablePadding dense>    {/* 👈 dense makes items shorter */}
+      <List disablePadding dense>
         {visibleTasks.map((task) => (
           <ListItem
             key={task.id}
             sx={{
               borderRadius: 2,
               mb: 1,
-              '&:last-of-type': { mb: 0 },
-              bgcolor: 'rgba(255,255,255,0.7)',
-              py: 1,                 // vertical padding inside item
+              "&:last-of-type": { mb: 0 },
+              backgroundColor: "#F4F1FF",
+              py: 1,
               px: 1.5,
+              display: "flex",
+              alignItems: "flex-start",
             }}
           >
             <ListItemText
+              primaryTypographyProps={{
+                style: {
+                  fontFamily: "Inter, sans-serif",
+                  fontWeight: 500,
+                  color: "var(--color-text-main)",
+                },
+              }}
+              secondaryTypographyProps={{
+                style: {
+                  fontFamily: "Inter, sans-serif",
+                  fontSize: "0.85rem",
+                  color: "var(--color-text-muted)",
+                },
+              }}
               primary={task.title}
               secondary={task.description}
             />
 
-            <Stack spacing={0.5} alignItems="flex-end">
+            <Stack spacing={0.5} alignItems="flex-end" sx={{ ml: 2 }}>
+              {/* Points / XP for habit */}
               <Chip
                 size="small"
                 label={`${task.points} pts`}
-                color="secondary"
-                variant="filled"
+                sx={{
+                  backgroundColor: "var(--color-primary-soft)",
+                  color: "var(--color-primary)",
+                  fontFamily: "Poppins, sans-serif",
+                  fontSize: "0.7rem",
+                  fontWeight: 500,
+                  borderRadius: "999px",
+                }}
               />
+
+              {/* Frequency (if you have something like timesPerWeek) */}
+              {task.timesPerWeek && (
+                <Chip
+                  size="small"
+                  label={`${task.timesPerWeek}x / week`}
+                  sx={{
+                    backgroundColor: "white",
+                    borderColor: "var(--color-border-subtle)",
+                    borderWidth: 1,
+                    borderStyle: "solid",
+                    fontFamily: "Inter, sans-serif",
+                    fontSize: "0.7rem",
+                    color: "var(--color-text-muted)",
+                    borderRadius: "999px",
+                  }}
+                />
+              )}
+
+              {/* Difficulty */}
               <Chip
                 size="small"
                 label={`Difficulty: ${task.difficulty}`}
-                color="primary"
-                variant="outlined"
+                sx={{
+                  backgroundColor: "white",
+                  borderColor: "var(--color-border-subtle)",
+                  borderWidth: 1,
+                  borderStyle: "solid",
+                  fontFamily: "Inter, sans-serif",
+                  fontSize: "0.7rem",
+                  color: "var(--color-text-muted)",
+                  borderRadius: "999px",
+                }}
               />
+
+              {/* Completed indicator for the current week/day */}
               {task.completed && (
                 <Chip
                   size="small"
-                  label="Completed"
-                  color="success"
-                  variant="filled"
+                  label="On track"
+                  sx={{
+                    backgroundColor: "var(--color-difficulty-1)",
+                    color: "#FFFFFF",
+                    fontFamily: "Poppins, sans-serif",
+                    fontSize: "0.7rem",
+                    borderRadius: "999px",
+                  }}
                 />
               )}
             </Stack>

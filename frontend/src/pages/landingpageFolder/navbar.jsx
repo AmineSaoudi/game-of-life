@@ -1,54 +1,156 @@
 import React from "react";
-import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Box,
+} from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext";
 
 const Navbar = () => {
-  const { user, setUser, logout } = useAuthContext();
+  const { user, logout } = useAuthContext();
 
   return (
-    <AppBar position="fixed">
-      <Toolbar>
-        {/* Left side: logo/title */}
-        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+    <AppBar
+      position="fixed"
+      elevation={0}
+      sx={{
+        backgroundColor: "var(--color-bg)",  // switched from surface
+        borderBottom: "1px solid var(--color-border-subtle)",
+        boxShadow: "var(--shadow-soft)",
+        px: 4,
+        height: 72,
+        display: "flex",
+        justifyContent: "center",
+      }}
+    >
+      <Toolbar disableGutters sx={{ width: "100%", display: "flex" }}>
+        {/* LEFT — TITLE */}
+        <Typography
+          variant="h6"
+          sx={{
+            flexGrow: 1,
+            fontFamily: "Poppins, sans-serif",
+            fontWeight: 600,
+            color: "var(--color-primary)",       // unchanged
+            letterSpacing: "0.03em",
+            fontSize: "1.25rem",
+          }}
+        >
           Game Of Life
         </Typography>
 
-        {/* Right side: nav buttons */}
-
-        <Box sx={{ display: "flex", gap: 2 }}>
+        {/* RIGHT — NAV BUTTONS */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
           {user ? (
             <>
-              <Button color="inherit" component={RouterLink} to="/">
-                Home
-              </Button>
-              <Button color="inherit" component={RouterLink} to="/Tasks">
-                Tasks
-              </Button>
-              <Button color="inherit" component={RouterLink} to="/Habits">
-                Habits
-              </Button>
-              <Button color="inherit" component={RouterLink} to="/Rewards">
-                Rewards
-              </Button>
+              {[
+                { label: "Home", to: "/" },
+                { label: "Tasks", to: "/Tasks" },
+                { label: "Habits", to: "/Habits" },
+                { label: "Rewards", to: "/Rewards" },
+              ].map((item) => (
+                <Button
+                  key={item.to}
+                  component={RouterLink}
+                  to={item.to}
+                  sx={{
+                    padding: "6px 18px",
+                    borderRadius: "var(--radius-pill)",
+                    fontFamily: "Poppins, sans-serif",
+                    fontSize: "0.85rem",
+                    fontWeight: 500,
+                    textTransform: "none",
+                    backgroundColor: "var(--color-primary-soft)",
+                    color: "var(--color-primary)",
+                    boxShadow: "0 2px 6px rgba(108, 76, 207, 0.15)",
 
-              {/* 👇 Greeting + Points */}
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <Typography variant="body1">
-                  Hi <strong>{user.username}</strong> — {user.points} pts
-                </Typography>
+                    "&:hover": {
+                      backgroundColor: "var(--color-primary)",
+                      color: "white",
+                    },
+                  }}
+                >
+                  {item.label}
+                </Button>
+              ))}
+
+              {/* GREETING (fixed) */}
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "6px 14px",
+                  borderRadius: "var(--radius-pill)",
+                  backgroundColor: "var(--color-primary-soft)",
+                  color: "var(--color-primary-dark)",
+                  fontFamily: "Inter, sans-serif",
+                  fontSize: "0.85rem",
+                  fontWeight: 500,
+                }}
+              >
+                Hi {user.username} • {user.points} pts
               </Box>
 
-              <Button color="inherit" component={RouterLink} onClick={logout}>
+              {/* LOGOUT */}
+              <Button
+                onClick={logout}
+                sx={{
+                  padding: "6px 18px",
+                  borderRadius: "var(--radius-pill)",
+                  backgroundColor: "var(--color-primary-soft)",
+                  color: "var(--color-primary)",
+                  fontFamily: "Poppins, sans-serif",
+                  textTransform: "none",
+                  fontWeight: 500,
+
+                  "&:hover": {
+                    backgroundColor: "var(--color-primary)",
+                    color: "white",
+                  },
+                }}
+              >
                 Logout
               </Button>
             </>
           ) : (
             <>
-              <Button color="inherit" component={RouterLink} to="/login">
+              <Button
+                component={RouterLink}
+                to="/login"
+                sx={{
+                  padding: "6px 18px",
+                  borderRadius: "var(--radius-pill)",
+                  fontFamily: "Poppins",
+                  textTransform: "none",
+                  backgroundColor: "var(--color-primary-soft)",
+                  color: "var(--color-primary)",
+                  "&:hover": {
+                    backgroundColor: "var(--color-primary)",
+                    color: "white",
+                  },
+                }}
+              >
                 Login
               </Button>
-              <Button color="inherit" component={RouterLink} to="/signup">
+
+              <Button
+                component={RouterLink}
+                to="/signup"
+                sx={{
+                  padding: "6px 18px",
+                  borderRadius: "var(--radius-pill)",
+                  backgroundColor: "var(--color-primary)",
+                  color: "white",
+                  fontFamily: "Poppins",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: "var(--color-primary-dark)",
+                  },
+                }}
+              >
                 Register
               </Button>
             </>

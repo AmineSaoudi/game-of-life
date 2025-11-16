@@ -45,17 +45,6 @@ public class TaskService {
 
     }
 
-    // @Transactional
-    // public TaskResponseDTO editById(Integer id, TaskPatchDTO taskPutReq) {
-    // Task existingTask = taskRepository.findById(id)
-    // .orElseThrow(() -> new BadRequestException("Cannot find task with id: " +
-    // id));
-
-    // mapper.updateEntityFromPatch(taskPutReq, existingTask);
-
-    // return mapper.toDto(taskRepository.save(existingTask));
-    // }
-
     @Transactional
     public TaskResponseDTO editById(Integer id, TaskPatchDTO taskPatchReq) {
         Task existingTask = taskRepository.findById(id)
