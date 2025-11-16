@@ -4,12 +4,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext";
 
 const Navbar = () => {
-  const { user, setUser } = useAuthContext();
-
-  const onLogout = () => {
-    setUser(null);
-    localStorage.removeItem("token");
-  };
+  const { user, setUser, logout } = useAuthContext();
 
   return (
     <AppBar position="fixed">
@@ -36,7 +31,15 @@ const Navbar = () => {
               <Button color="inherit" component={RouterLink} to="/Rewards">
                 Rewards
               </Button>
-              <Button color="inherit" component={RouterLink} onClick={onLogout}>
+
+              {/* 👇 Greeting + Points */}
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Typography variant="body1">
+                  Hi <strong>{user.username}</strong> — {user.points} pts
+                </Typography>
+              </Box>
+
+              <Button color="inherit" component={RouterLink} onClick={logout}>
                 Logout
               </Button>
             </>

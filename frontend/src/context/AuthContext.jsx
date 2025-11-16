@@ -12,45 +12,49 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchUser = useCallback(async () => {
     const token = localStorage.getItem(import.meta.env.VITE_TOKEN_KEY);
 
     if (!token) {
-      // no token -> not authenticated, skip /me
-      console.log("NO TOKEN");
-      setLoading(false);
+      // no token -> not authenticated
+      setUser(null);
       return;
     }
 
-    fetch(`${import.meta.env.VITE_SERVER_ORIGIN}/auth/me`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Invalid or expired token");
-        return res.json();
-      })
-      .then((user) => {
-        setUser(user); // backend returns user on /me
-      })
-      .catch((err) => {
-        console.error(err);
-        // token is bad -> clear it
-        localStorage.removeItem(import.meta.env.VITE_TOKEN_KEY);
-        setUser(null);
-      })
-      .finally(() => {
-        setLoading(false);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_SERVER_ORIGIN}/auth/me`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
+
+      if (!res.ok) throw new Error("Invalid or expired token");
+
+      const userData = await res.json();
+      setUser(userData);
+    } catch (err) {
+      console.error(err);
+      // token is bad -> clear it
+      localStorage.removeItem(import.meta.env.VITE_TOKEN_KEY);
+      setUser(null);
+    }
   }, []);
 
-  const logout = () => {
+  // initial load
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      await fetchUser();
+      setLoading(false);
+    })();
+  }, [fetchUser]);
+
+  const logout = useCallback(() => {
     localStorage.removeItem(import.meta.env.VITE_TOKEN_KEY);
     setUser(null);
-  };
+  }, []);
 
   const value = {
     user,
@@ -58,6 +62,7 @@ export function AuthProvider({ children }) {
     loading,
     setLoading,
     logout,
+    refetchUser: fetchUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

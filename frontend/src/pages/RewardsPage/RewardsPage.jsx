@@ -1,3 +1,4 @@
+// src/components/RewardsDashboard.jsx
 import React, { useEffect, useState } from "react";
 import {
   Box,
@@ -14,121 +15,91 @@ import {
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import { alpha } from "@mui/material/styles";
-import EditIcon from "@mui/icons-material/Edit";
 
+import { userApiCalls, taskApiCalls } from "../../utils/Api";
 
-// Yellow (low milestone) → Red (high milestone)
-function getMilestoneColor(milestone, maxMilestone) {
-  const ratio = milestone / maxMilestone; // 0..1
-  const hue = 50 - 50 * ratio; // 50° (yellow) -> 0° (red)
-  return `hsl(${hue}, 90%, 55%)`;
-}
-
-const DAILY_MILESTONES = [50, 100, 150, 200];
+// Milestones (points)
+const DAILY_MILESTONES = [100, 250, 500];
 const LT_MILESTONES = [500, 1000, 1500, 2000];
 
-const STORAGE_KEY = "rewardsState";
+// Simple color ramp based on how big the milestone is
+const getMilestoneColor = (milestone, max) => {
+  const ratio = milestone / max;
+  if (ratio <= 0.33) return "#42a5f5"; // blue
+  if (ratio <= 0.66) return "#ffb300"; // amber
+  return "#66bb6a"; // green
+};
+// helper: is a given date string on *today* (local time)?
+const isCompletedToday = (task) => {
+  if (!task.completed || !task.completedAt) return false;
 
-function getTodayString() {
-  return new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
-}
+  const completedDate = new Date(task.completedAt);
+  const now = new Date();
 
-export default function RewardsPage() {
+  return (
+    completedDate.getFullYear() === now.getFullYear() &&
+    completedDate.getMonth() === now.getMonth() &&
+    completedDate.getDate() === now.getDate()
+  );
+};
+
+
+const RewardsDashboard = () => {
   const [dailyPoints, setDailyPoints] = useState(0);
   const [totalPoints, setTotalPoints] = useState(0);
 
   const [dailyRewards, setDailyRewards] = useState({
-    50: "One hour break",
-    100: "Buy a small treat",
-    150: "One hour break",
-    200: "Guilt-free evening",
-  });
-  const [longTermRewards, setLongTermRewards] = useState({
-    500: "Reward for 500 pts",
-    1000: "Reward for 1000 pts",
-    1500: "Reward for 1500 pts",
-    2000: "Reward for 2000 pts",
+    100: "Take a 15-minute break to do something you enjoy",
+    250: "Watch an episode of your favorite show",
+    500: "Order a nice coffee or dessert",
   });
 
-  // Claimed status for each milestone (true = claimed)
+  const [longTermRewards, setLongTermRewards] = useState({
+    500: "Treat yourself to a fancy coffee or dessert",
+    1000: "Buy a small treat (book, game skin, candle, etc.)",
+    1500: "Plan a fun outing: movie, museum, or day with friends",
+    2000: "Bigger reward: new headphones, shoes, or a mini day trip",
+  });
+
+
   const [claimedDaily, setClaimedDaily] = useState({});
   const [claimedLT, setClaimedLT] = useState({});
 
-  // ---------------------------------------------------------------------------
-  // INITIAL LOAD: get data (currently localStorage, later from your backend)
-  // ---------------------------------------------------------------------------
+  // ---------------------- LOAD DATA FROM API --------------------------------
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    const today = getTodayString();
+  const loadPoints = async () => {
+    try {
+      // 1) Get user (for total points)
+      const user = await userApiCalls.getCurrentUser();
 
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
+      // 2) Get all tasks (for daily points)
+      const tasks = await taskApiCalls.getTasks();
 
-        // TODO: API – instead of reading from localStorage,
-        // call your backend here to fetch:
-        // - dailyPoints
-        // - totalPoints
-        // - dailyRewards / longTermRewards
-        // - claimedDaily / claimedLT
-        // For example: GET /api/rewards for this user.
+      // Total points: directly from user API
+      const userTotalPoints = user?.points ?? 0;
+      setTotalPoints(userTotalPoints);
 
-        setTotalPoints(parsed.totalPoints ?? 0);
-        setDailyRewards(parsed.dailyRewards ?? dailyRewards);
-        setLongTermRewards(parsed.longTermRewards ?? longTermRewards);
-        setClaimedLT(parsed.claimedLT ?? {});
+      // Daily points: sum of points for tasks completed *today*
+      const dailyFromTasks = (tasks || [])
+        .filter(isCompletedToday)                 // 👈 use helper here
+        .reduce((sum, t) => sum + (t.points ?? 0), 0);
 
-        if (parsed.lastDailyDate === today) {
-          setDailyPoints(parsed.dailyPoints ?? 0);
-          setClaimedDaily(parsed.claimedDaily ?? {});
-        } else {
-          // New day => reset daily points & claimed daily rewards
-          setDailyPoints(0);
-          setClaimedDaily({});
-        }
-      } catch (e) {
-        console.error("Failed to parse rewards state:", e);
-      }
+      setDailyPoints(dailyFromTasks);
+    } catch (err) {
+      console.error("Failed to load points:", err);
+      // you could set error state here if needed
     }
+  };
 
-    // If you get points from a central place (e.g. context or prop),
-    // you can also setDailyPoints / setTotalPoints from props here instead.
-  }, []); // run once on mount
+  loadPoints();
+}, []);
 
-  // ---------------------------------------------------------------------------
-  // SAVE: whenever something changes, persist it
-  // ---------------------------------------------------------------------------
-  useEffect(() => {
-    const today = getTodayString();
-
-    const stateToSave = {
-      dailyPoints,
-      totalPoints,
-      dailyRewards,
-      longTermRewards,
-      claimedDaily,
-      claimedLT,
-      lastDailyDate: today,
-    };
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
-
-    // TODO: API – this is where you’d sync changes to your backend.
-    // Example:
-    //   await api.updateRewards(stateToSave)
-    // Called after user edits reward names or toggles claimed status.
-  }, [dailyPoints, totalPoints, dailyRewards, longTermRewards, claimedDaily, claimedLT]);
-
-  // ---------------------------------------------------------------------------
-  // Handlers
-  // ---------------------------------------------------------------------------
-
+  // ---------------------- HANDLERS ------------------------------------------
   const handleDailyRewardChange = (milestone, value) => {
     setDailyRewards((prev) => ({
       ...prev,
       [milestone]: value,
     }));
-    // TODO: API – optionally debounce and PATCH just this reward text.
   };
 
   const handleLTRewardChange = (milestone, value) => {
@@ -136,7 +107,6 @@ export default function RewardsPage() {
       ...prev,
       [milestone]: value,
     }));
-    // TODO: API – optionally debounce and PATCH just this reward text.
   };
 
   const toggleDailyClaimed = (milestone) => {
@@ -144,7 +114,6 @@ export default function RewardsPage() {
       ...prev,
       [milestone]: !prev[milestone],
     }));
-    // TODO: API – PATCH claimed status for this daily reward.
   };
 
   const toggleLTClaimed = (milestone) => {
@@ -152,20 +121,23 @@ export default function RewardsPage() {
       ...prev,
       [milestone]: !prev[milestone],
     }));
-    // TODO: API – PATCH claimed status for this long-term reward.
   };
 
-  // ---------------------------------------------------------------------------
-  // Progress bar values
-  // (points themselves will come from elsewhere in your app later)
-  // ---------------------------------------------------------------------------
-
+  // ---------------------- DERIVED VALUES ------------------------------------
   const dailyMax = DAILY_MILESTONES[DAILY_MILESTONES.length - 1];
   const ltMax = LT_MILESTONES[LT_MILESTONES.length - 1];
 
-  const dailyProgress = Math.min((dailyPoints / dailyMax) * 100, 100);
-  const ltProgress = Math.min((totalPoints / ltMax) * 100, 100);
+  const dailyProgress =
+    dailyMax > 0
+      ? Math.min(100, Math.round((dailyPoints / dailyMax) * 100))
+      : 0;
 
+  const ltProgress =
+    ltMax > 0
+      ? Math.min(100, Math.round((totalPoints / ltMax) * 100))
+      : 0;
+
+  // ---------------------- RENDER --------------------------------------------
   return (
     <Box sx={{ p: 3 }}>
       {/* Top counters */}
@@ -177,8 +149,6 @@ export default function RewardsPage() {
             <Typography variant="body2" color="text.secondary">
               Resets every day
             </Typography>
-            {/* TODO: API – dailyPoints should come from your tasks/XP system.
-                This component just displays whatever value you pass in or load. */}
           </CardContent>
         </Card>
         <Card sx={{ flex: 1 }}>
@@ -188,7 +158,6 @@ export default function RewardsPage() {
             <Typography variant="body2" color="text.secondary">
               Lifetime points
             </Typography>
-            {/* TODO: API – same here: totalPoints should come from backend. */}
           </CardContent>
         </Card>
       </Stack>
@@ -221,32 +190,36 @@ export default function RewardsPage() {
                 const color = getMilestoneColor(m, dailyMax);
 
                 return (
-                    <Box
+                  <Box
                     key={m}
                     sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
-                        p: 0.5,
-                        borderRadius: 1,
-                        transition: "background-color 0.2s ease, transform 0.2s ease",
-                        borderLeft: `4px solid ${color}`,
-                        bgcolor: claimed ? alpha(color, 0.18) : alpha(color, 0.05),
-                        "&:hover": {
-                        bgcolor: claimed ? alpha(color, 0.24) : alpha(color, 0.12),
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      p: 0.5,
+                      borderRadius: 1,
+                      transition:
+                        "background-color 0.2s ease, transform 0.2s ease",
+                      borderLeft: `4px solid ${color}`,
+                      bgcolor: claimed
+                        ? alpha(color, 0.18)
+                        : alpha(color, 0.05),
+                      "&:hover": {
+                        bgcolor: claimed
+                          ? alpha(color, 0.24)
+                          : alpha(color, 0.12),
                         transform: "translateX(2px)",
-                        },
+                      },
                     }}
-                    >
+                  >
                     <Typography
-                        sx={{
+                      sx={{
                         minWidth: "80px",
                         whiteSpace: "nowrap",
-                        }}
+                      }}
                     >
-                        {m} pts
+                      {m} pts
                     </Typography>
-
 
                     {/* Check-circle toggle */}
                     <Tooltip
@@ -265,23 +238,20 @@ export default function RewardsPage() {
                       </IconButton>
                     </Tooltip>
 
-                    {/* EDIT ICON */}
-                    <IconButton size="small" sx={{ opacity: 0.6 }}>
-                        <EditIcon fontSize="small" />
-                    </IconButton>
-
-                    {/* editable field */}
+                    {/* Editable reward text */}
                     <TextField
-                        size="small"
-                        fullWidth
-                        value={dailyRewards[m] || ""}
-                        onChange={(e) => handleDailyRewardChange(m, e.target.value)}
-                        InputProps={{
+                      size="small"
+                      fullWidth
+                      value={dailyRewards[m] || ""}
+                      onChange={(e) =>
+                        handleDailyRewardChange(m, e.target.value)
+                      }
+                      InputProps={{
                         sx: {
-                            textDecoration: claimed ? "line-through" : "none",
-                            opacity: claimed ? 0.6 : 1,
+                          textDecoration: claimed ? "line-through" : "none",
+                          opacity: claimed ? 0.6 : 1,
                         },
-                    }}
+                      }}
                     />
                   </Box>
                 );
@@ -317,30 +287,35 @@ export default function RewardsPage() {
                 const color = getMilestoneColor(m, ltMax);
 
                 return (
-                    <Box
+                  <Box
                     key={m}
                     sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
-                        p: 0.5,
-                        borderRadius: 1,
-                        transition: "background-color 0.2s ease, transform 0.2s ease",
-                        borderLeft: `4px solid ${color}`,
-                        bgcolor: claimed ? alpha(color, 0.18) : alpha(color, 0.05),
-                        "&:hover": {
-                        bgcolor: claimed ? alpha(color, 0.24) : alpha(color, 0.12),
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      p: 0.5,
+                      borderRadius: 1,
+                      transition:
+                        "background-color 0.2s ease, transform 0.2s ease",
+                      borderLeft: `4px solid ${color}`,
+                      bgcolor: claimed
+                        ? alpha(color, 0.18)
+                        : alpha(color, 0.05),
+                      "&:hover": {
+                        bgcolor: claimed
+                          ? alpha(color, 0.24)
+                          : alpha(color, 0.12),
                         transform: "translateX(2px)",
-                        },
+                      },
                     }}
-                    >
+                  >
                     <Typography
-                        sx={{
-                            minWidth: "80px",     // ← prevents wrapping
-                            whiteSpace: "nowrap", // ← forces text to stay on one line
-                        }}
-                        >
-                        {m} pts
+                      sx={{
+                        minWidth: "80px",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {m} pts
                     </Typography>
 
                     {/* Check-circle toggle */}
@@ -360,10 +335,6 @@ export default function RewardsPage() {
                       </IconButton>
                     </Tooltip>
 
-                    {/* EDIT ICON */}
-                    <IconButton size="small" sx={{ opacity: 0.6 }}>
-                        <EditIcon fontSize="small" />
-                    </IconButton>
 
                     {/* Editable reward text */}
                     <TextField
@@ -391,4 +362,6 @@ export default function RewardsPage() {
       </Stack>
     </Box>
   );
-}
+};
+
+export default RewardsDashboard;
