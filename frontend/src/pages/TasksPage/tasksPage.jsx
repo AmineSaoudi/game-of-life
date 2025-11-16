@@ -148,8 +148,9 @@ export default function TasksPage() {
     // Container for page
     <Box
       sx={{
+        mt:2,
         width: "100%",
-        minHeight: "100vh",
+        minHeight: "90vh",
         boxSizing: "border-box",
         overflowX: "hidden", // prevent horizontal scroll
         background: "linear-gradient(180deg, #fbfbfdff 0%, #e1cffcff 100%)",
